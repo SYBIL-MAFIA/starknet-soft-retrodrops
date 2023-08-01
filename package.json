@@ -1,0 +1,19 @@
+{
+  "name": "starknet-soft-retrodrop",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "retrodrop.tools",
+  "license": "MIT",
+  "dependencies": {
+    "ccxt": "^4.0.41",
+    "starknet": "^5.14.1",
+    "web3": "^4.0.3",
+    "winston": "^3.10.0"
+  }
+}
