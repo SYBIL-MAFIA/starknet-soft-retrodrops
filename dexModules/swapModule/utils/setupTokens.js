@@ -83,9 +83,9 @@ export default class SetupTokens {
         }
         
         let decimals
-        if (src === 'ETH' || src === 'DAI') { decimals = 18 }
-        if (src === 'USDC' || src === 'USDT') { decimals = 6 }
-        if (src === 'WBTC') { decimals = 8 }
+        if (src === 'ETH' || src === 'DAI'){decimals = 18}
+        if (src === 'USDC' || src === 'USDT'){decimals = 6}
+        if (src === 'WBTC'){decimals = 8}
         
         return {fromBalance, SrcContract, DstContract, src, dst,pool_id,decimals};
 
