@@ -1,27 +1,44 @@
-import fs from 'fs/promises';
+import fs from 'fs'
 import Workers from './utils/workers.js';
 import { General } from './setting/config.js';
-import path from 'path';
 
-const loadFile = async (filePath) => {
+
+export const loadWallets = async () => {
   try {
-    const absolutePath = path.resolve(filePath); 
-    const data = await fs.readFile(absolutePath, 'utf-8');
-    return data.trim().split('\n');
-  } catch (error) {
-    console.error('Error reading file:', error);
-    throw error; 
+      const mm_keys = fs.readFileSync('./data/mm_keys.txt', "utf8")
+          .split("\n")
+          .map(row => row.trim())
+          .filter(row => row !== "");
+
+      const stark_keys = fs.readFileSync('./data/stark_keys.txt', "utf-8")
+          .split("\n")
+          .map(row => row.trim())
+          .filter(row => row !== "");
+
+      const okecx = fs.readFileSync('./data/okx_addresses.txt', "utf-8")
+          .split("\n")
+          .map(row => row.trim())
+          .filter(row => row !== "");
+
+        const withdrawalAddressOkx = fs.readFileSync('./data/okxStarknetWithdrawal.txt', "utf-8")
+          .split("\n")
+          .map(row => row.trim())
+          .filter(row => row !== "");
+
+      return { mm_keys, stark_keys, okecx, withdrawalAddressOkx };
+  } catch (err) {
+      console.error(`Error while loading wallet data: ${err.message}`);
+      throw err;
   }
 };
 
-
 const main = async () => {
   let addressIndex = 0; 
-    
-  const mmKeys =  await loadFile('./data/mm_keys.txt');
-  const starkKeys = await loadFile('./data/stark_keys.txt');
-  const okecx = await loadFile('./data/okx_addresses.txt');
-  const withdrawalAddressOkx = await loadFile('./data/okxStarknetWithdrawal.txt')
+    const values = await loadWallets()
+  const mmKeys =  values.mm_keys;
+  const starkKeys = values.stark_keys
+  const okecx = values.okecx
+  const withdrawalAddressOkx = values.withdrawalAddressOkx
   
   const groups = [];
   for (let i = 0; i < mmKeys.length; i += General.threads_counter) {

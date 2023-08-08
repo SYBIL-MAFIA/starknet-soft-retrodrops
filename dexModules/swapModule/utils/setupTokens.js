@@ -22,10 +22,14 @@ export default class SetupTokens {
                     let fromAmountPercentage;
                     const [minPercent, maxPercent] = this.percentToSwapETH;
                     fromAmountPercentage = Math.random() * (maxPercent - minPercent) + minPercent;
+                    const roundedPercentage = Math.floor(fromAmountPercentage);
+            
                     
-                    TokensForSwapData.fromBalance = BigInt(
-                        Math.floor(Number(TokensForSwapData.fromBalance) * fromAmountPercentage / 100)
-                    );
+                    const fromBalanceBigInt = BigInt(TokensForSwapData.fromBalance);
+            
+                    
+                    TokensForSwapData.fromBalance = fromBalanceBigInt - (fromBalanceBigInt * BigInt(roundedPercentage) / 100n);
+
                     return TokensForSwapData;
                 } else {
                     return TokensForSwapData;
@@ -33,6 +37,7 @@ export default class SetupTokens {
             } else {
                 return await this.amountForPercentage(TokensForSwapData);
             }
+            
         } catch (error) {
             throw error;
         }
@@ -40,7 +45,7 @@ export default class SetupTokens {
 
     async selectTokensForSwap(balances, isFirstSwap,moduleName) {
         let tokens = SrcDstTokens[moduleName]
-        
+        console.log(balances)
         let availableTokens;
         if (isFirstSwap) {
             availableTokens = tokens.filter(t => {
@@ -78,9 +83,9 @@ export default class SetupTokens {
         }
         
         let decimals
-        if (src === 'ETH' || src === 'DAI'){decimals = 18}
-        if (src === 'USDC' || src === 'USDT'){decimals = 6}
-        if (src === 'WBTC'){decimals = 8}
+        if (src === 'ETH' || src === 'DAI') { decimals = 18 }
+        if (src === 'USDC' || src === 'USDT') { decimals = 6 }
+        if (src === 'WBTC') { decimals = 8 }
         
         return {fromBalance, SrcContract, DstContract, src, dst,pool_id,decimals};
 
