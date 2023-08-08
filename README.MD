@@ -16,4 +16,4 @@ In order for the software to start working, you need to:
 
 ### Support / Qs
 `RU Article:`  https://teletype.in/@retrodrop.tools/starknet-soft
-`Telegram:` https://t.me/retrodropTools | https://t.me/fraggdiller
+`Telegram:` https://t.me/retrodropTools
