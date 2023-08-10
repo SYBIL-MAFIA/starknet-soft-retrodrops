@@ -1,15 +1,17 @@
 export class General{
 
-  static shuffle = false
-  static threads_counter = 5
-  static swapNonZeroTokens = true
+  static walletName = 'Argent_X' // Braavos | Argent_X
+
+  static shuffle = true
+  static threads_counter = 1
+  static swapNonZeroTokens = false
 
   // если баланс какого-то токена, будет меньше, то в свапах он использоваться не будет
-  static usdcBalance = 0
-  static usdtBalance = 0
-  static ethBalance = 0
-  static wbtcBalance = 0
-  static daiBalance = 0
+  static usdcBalance = 7
+  static usdtBalance = 100
+  static ethBalance = 0.004
+  static wbtcBalance = 100
+  static daiBalance = 100
 
 }
 
@@ -34,7 +36,7 @@ export class OKX {
 }
 
 export class OKXAuth {
-    static use_okx_proxy = true;  // use proxy | true || false |
+    static use_okx_proxy = false;  // use proxy | true || false |
     static okx_proxy = '';  // proxy url | http://login:password@ip:port |
     static okx_apiKey = '';
     static okx_apiSecret = '';
@@ -45,23 +47,23 @@ export class OKXAuth {
 
 export class Bridge {
   
-  static useBridging = true // хотим ли мы вообще использовать мосты
-  static useBridgeToStark = true // если мы хотим использовать мосты, то хотим ли мы использовать мост, чтобы депнуть в сеть старка
-  static useBridgeFromStark = true // если мы хотим использовать мосты, то хотим ли мы использовать мост, чтобы вывести деньги из старка
-  static useOrbiterBridge = true // используем ли мы orbiter мост, чтобы бриджануть в/из старка
+  static useBridging = false // хотим ли мы вообще использовать мосты
+  static useBridgeToStark = false // если мы хотим использовать мосты, то хотим ли мы использовать мост, чтобы депнуть в сеть старка
+  static useBridgeFromStark = false // если мы хотим использовать мосты, то хотим ли мы использовать мост, чтобы вывести деньги из старка
+  static useOrbiterBridge = false // используем ли мы orbiter мост, чтобы бриджануть в/из старка
   static delay = [10,15]
 
-  static swapAllBalanceToStark = true // включив этот параметр, для моста Orbiter, будем переводиться максимальная сумма доступная для бриджа
+  static swapAllBalanceToStark = false // включив этот параметр, для моста Orbiter, будем переводиться максимальная сумма доступная для бриджа
   static  amountToBridgeToStark = [0.001,0.002] // минимум 0.005
   
-  static swapAllBalanceFromStark = true // включив этот параметр, для моста Orbiter, будем переводиться максимальная сумма доступная для бриджа
+  static swapAllBalanceFromStark = false // включив этот параметр, для моста Orbiter, будем переводиться максимальная сумма доступная для бриджа
   static  amountToBridgeFromStark = [0.001,0.002] // минимум 0.005
 }
 
 
 
 export class _10KSwap {
-  static swapAllBalance = false;
+  static swapAllBalance = true;
 
   static swapModule = true
   static addLP = true
@@ -71,7 +73,7 @@ export class _10KSwap {
   static percentToSwap = [5,5];
   static delay = [1, 2];
 
-  static percentToSwapETH = [5, 5];
+  static percentToSwapETH = [10, 15];
 
   static poolsForAddLP = ['ETH/USDC','ETH/USDT']
   static poolsForBurnLP = ['ETH/USDC','ETH/USDT']
@@ -107,7 +109,7 @@ export class SithSwap {
   static percentToSwap = [10, 15];
   static delay = [1, 2];
 
-  static percentToSwapETH = [5, 5];
+  static percentToSwapETH = [10, 15];
 
   static poolsForAddLP = ['ETH/USDC','ETH/USDT']
   static poolsForBurnLP = ['ETH/USDC','ETH/USDT']

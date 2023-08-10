@@ -2,6 +2,8 @@ import { chainContract, rpc, poolIds } from './other.js';
 import { Contract, RpcProvider,ec,CallData,hash } from 'starknet';
 import { abiMySwapTokensAbi,abiJediSwapStarknetMain,abiJediSwapStarknetReserves,abi_10KSwapStarknetMain,abi_10KSwapStarknetReserves,abiSithSwapStarknetMain,abiMySwapStarknet } from "./abi.js"
 import Web3 from 'web3';
+import {General} from "../setting/config.js";
+import {calculateBraavosAddress} from "./calculateBraavosAddress.js";
 
 
 export default class helpersFunctions {
@@ -67,11 +69,11 @@ export default class helpersFunctions {
         );
 
         return {
-            USDC: usdcBalance,
-            USDT: usdtBalance,
-            ETH: ETHBalance,
-            DAI: DAIBalance,
-            WBTC: WBTCBalance,
+            USDC: 0,
+            USDT: 0,
+            ETH: BigInt(0.0053*10**18),
+            DAI: 0,
+            WBTC: 0,
         };
     }
 
@@ -168,10 +170,19 @@ export default class helpersFunctions {
     }
 
     async getStarknetAddress(startPrivateKey){
+        switch (General.walletName) {
+            case "Argent_X":
+                return await this.getArgentXWallet(startPrivateKey)
+            case 'Braavos':
+                return calculateBraavosAddress(startPrivateKey);
+        }
+    }
+
+    async getArgentXWallet(key){
         const argentXproxyClassHash = "0x25ec026985a3bf9d0cc1fe17326b245dfdc3ff89b8fde106542a3ea56c5a918";
         const argentXaccountClassHash = "0x033434ad846cdd5f23eb73ff09fe6fddd568284a0fb7d1be20ee482f044dabe2";
 
-        const StarkpublicKey = ec.starkCurve.getStarkKey(startPrivateKey);
+        const StarkpublicKey = ec.starkCurve.getStarkKey(key);
 
         const ConstructorCallData = CallData.compile({
             implementation: argentXaccountClassHash,
