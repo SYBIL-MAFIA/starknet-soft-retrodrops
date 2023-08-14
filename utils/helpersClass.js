@@ -69,11 +69,11 @@ export default class helpersFunctions {
         );
 
         return {
-            USDC: 0,
-            USDT: 0,
-            ETH: BigInt(0.0053*10**18),
-            DAI: 0,
-            WBTC: 0,
+            USDC: usdcBalance,
+            USDT: usdtBalance,
+            ETH: ETHBalance,
+            DAI: DAIBalance,
+            WBTC: WBTCBalance,
         };
     }
 
