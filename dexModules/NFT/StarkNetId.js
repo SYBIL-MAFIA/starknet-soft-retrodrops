@@ -3,7 +3,6 @@ import {General} from "../../setting/config.js";
 import helpersFunctions from "../../utils/helpersClass.js";
 import {CallData, Contract} from "starknet";
 import {StarkNetIDAbi} from "../../utils/abi.js";
-import {chainContract} from "../../utils/other.js";
 import txConfirmation from "../../utils/txPayload.js";
 
 export default class StarkNetIdClass extends SDKOptions {

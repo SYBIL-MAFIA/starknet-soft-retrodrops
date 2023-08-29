@@ -1,7 +1,6 @@
-import { Contract, RpcProvider } from 'starknet';
-import { General } from '../setting/config.js';
-import { chainContract, poolTokens, rpc } from './other.js';
-
+import {Contract, RpcProvider} from 'starknet';
+import {General} from '../setting/config.js';
+import {chainContract, poolTokens, rpc} from './other.js';
 
 
 export default class minAmount {
@@ -264,8 +263,7 @@ export default class minAmount {
         }
         amount = amount + (amount * (BigInt(10)))/(BigInt(1000))
         let maxDstAmoun = BigInt(amount);
-        let maxSrcAmount = (poolSrc * maxDstAmoun) / (poolDst - maxDstAmoun)
-        return maxSrcAmount
+        return (poolSrc * maxDstAmoun) / (poolDst - maxDstAmoun)
 
     }
 }

@@ -36,7 +36,7 @@ export default class SwapModuleClass extends SDKOptions {
                     const txPayload = await new MakeSwap(TokensForSwapData.fromBalance, TokensForSwapData.src, TokensForSwapData.dst, TokensForSwapData.pool_id, moduleName, this.address, this.provider, this.account).execute()
 
 
-                    //await new ConfirmTx(txPayload, this.account, this.provider, logger, `[Account ${accountIndex}][${moduleName}][SWAP][tx №${i + 1}]`).execute()
+                    await new ConfirmTx(txPayload, this.account, this.provider, logger, `[Account ${accountIndex}][${moduleName}][SWAP][tx №${i + 1}]`).execute()
                     await helper.setupDelay(logger, `[Account ${accountIndex}][${moduleName}][SWAP][tx №${i + 1}]`)
                     isFirstSwap = false
                     break
