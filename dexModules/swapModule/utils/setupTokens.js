@@ -44,53 +44,68 @@ export default class SetupTokens {
     }
 
     async selectTokensForSwap(balances, isFirstSwap,moduleName) {
-        let tokens = SrcDstTokens[moduleName]
-        console.log(balances)
-        let availableTokens;
-        if (isFirstSwap) {
-            availableTokens = tokens.filter(t => {
-                return t.token === 'ETH' && balances[t.token] > t.minBalance;
-            });
-        } else {
-            availableTokens = tokens.filter(t => {
-                return t.token !== 'ETH' && balances[t.token] > t.minBalance;
-            });
-    
-            if (availableTokens.length === 0) {
+        try {
+            let tokens = SrcDstTokens[moduleName]
+
+
+            let availableTokens;
+            if (isFirstSwap) {
                 availableTokens = tokens.filter(t => {
                     return t.token === 'ETH' && balances[t.token] > t.minBalance;
                 });
-            }
-        }
-    
-        if (availableTokens.length === 0) {
-            throw new Error('No tokens with positive balance found.');
-        }
-        
-        const fromTokenObject = availableTokens[Math.floor(Math.random() * availableTokens.length)];
-    
-        const src = fromTokenObject.token;
-        const SrcContract = chainContract.Starknet[fromTokenObject.token];
-       
-        const dst = fromTokenObject.toTokens[Math.floor(Math.random() * fromTokenObject.toTokens.length)];
-        const DstContract = chainContract.Starknet[dst];
-    
-        let fromBalance = balances[fromTokenObject.token];
-        
-        let pool_id
-        if (moduleName === 'MySwap'){
-            pool_id = this.getPoolID(src,dst)
-        }
-        
-        let decimals
-        if (src === 'ETH' || src === 'DAI'){decimals = 18}
-        if (src === 'USDC' || src === 'USDT'){decimals = 6}
-        if (src === 'WBTC'){decimals = 8}
-        
-        return {fromBalance, SrcContract, DstContract, src, dst,pool_id,decimals};
+            } else {
+                availableTokens = tokens.filter(t => {
+                    return t.token !== 'ETH' && balances[t.token] > t.minBalance;
+                });
 
-        
+                if (availableTokens.length === 0) {
+                    availableTokens = tokens.filter(t => {
+                        return t.token === 'ETH' && balances[t.token] > t.minBalance;
+                    });
+                }
+            }
+
+            if (availableTokens.length === 0) {
+                throw new Error('No tokens with positive balance found.');
+            }
+
+
+            availableTokens.sort((a, b) => {
+                return Number(balances[b.token]) - Number(balances[a.token]);
+            });
+
+
+            const fromTokenObject = availableTokens[0];
+
+            const src = fromTokenObject.token;
+            const SrcContract = chainContract.Starknet[fromTokenObject.token];
+
+            const dst = fromTokenObject.toTokens[Math.floor(Math.random() * fromTokenObject.toTokens.length)];
+            const DstContract = chainContract.Starknet[dst];
+
+            let fromBalance = balances[fromTokenObject.token];
+
+            let pool_id = this.getPoolID(src, dst)
+
+            let decimals;
+            if (src === 'ETH' || src === 'DAI') {
+                decimals = 18
+            }
+            if (src === 'USDC' || src === 'USDT') {
+                decimals = 6
+            }
+            if (src === 'WBTC') {
+                decimals = 8
+            }
+
+            return {fromBalance, SrcContract, DstContract, src, dst, pool_id, decimals};
+        }catch (e) {
+            console.log(e)
+            throw new Error(e)
+        }
+
     }
+
 
     getPoolID(src,dst){
 

@@ -1,4 +1,4 @@
-dimport fs from 'fs'
+import fs from 'fs'
 import Workers from './utils/workers.js';
 import { General } from './setting/config.js';
 
@@ -20,10 +20,11 @@ export const loadWallets = async () => {
           .map(row => row.trim())
           .filter(row => row !== "");
 
-        const withdrawalAddressOkx = fs.readFileSync('./data/okxStarknetWithdrawal.txt', "utf-8")
+      const withdrawalAddressOkx = fs.readFileSync('./data/okxStarknetWithdrawal.txt', "utf-8")
           .split("\n")
           .map(row => row.trim())
           .filter(row => row !== "");
+
 
       return { mm_keys, stark_keys, okecx, withdrawalAddressOkx };
   } catch (err) {
@@ -39,7 +40,6 @@ const main = async () => {
   const starkKeys = values.stark_keys
   const okecx = values.okecx
   const withdrawalAddressOkx = values.withdrawalAddressOkx
-  
   const groups = [];
   for (let i = 0; i < mmKeys.length; i += General.threads_counter) {
     groups.push(mmKeys.slice(i, i + General.threads_counter));

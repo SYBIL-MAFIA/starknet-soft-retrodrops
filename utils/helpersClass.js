@@ -2,8 +2,10 @@ import { chainContract, rpc, poolIds } from './other.js';
 import { Contract, RpcProvider,ec,CallData,hash } from 'starknet';
 import { abiMySwapTokensAbi,abiJediSwapStarknetMain,abiJediSwapStarknetReserves,abi_10KSwapStarknetMain,abi_10KSwapStarknetReserves,abiSithSwapStarknetMain,abiMySwapStarknet } from "./abi.js"
 import Web3 from 'web3';
-import {General} from "../setting/config.js";
+import {General, OKXAuth} from "../setting/config.js";
 import {calculateBraavosAddress} from "./calculateBraavosAddress.js";
+import ccxt from "ccxt";
+import crypto from 'crypto';
 
 
 export default class helpersFunctions {
@@ -12,9 +14,132 @@ export default class helpersFunctions {
         this.config = config;
     }
 
+
+
+    async generateRandomNumber(){
+        const maxNumber = BigInt(10) ** BigInt(12);
+        const randomBytes = crypto.randomBytes(6);
+        let randomNumber = BigInt('0x' + randomBytes.toString('hex'));
+        randomNumber = randomNumber % maxNumber;
+        return randomNumber.toString().padStart(12, '0');
+    }
+
+    async waitForGasEVM(logger,moduleString){
+        const web3 = new Web3(new Web3.providers.HttpProvider(rpc.ERC20));
+        while (true) {
+            let baseFee = (await web3.eth.getBlock("latest")).baseFeePerGas;
+            let current_gas = Number(web3.utils.fromWei(String(baseFee), "gwei"));
+            if (current_gas >= General.maxGwei) {
+                logger.info(`${moduleString} - Gas is still high | Current ${current_gas} | Need ${General.maxGwei}`)
+                await new Promise(resolve => setTimeout(resolve, 60 * 1000))
+            } else {
+                logger.info(`${moduleString} - Gas within normal limits | Current ${current_gas} | Max ${General.maxGwei}`)
+                return true
+            }
+        }
+    }
+
+    async sleep(ms) {
+        return new Promise(resolve => setTimeout(resolve, ms));
+    }
+
+    async  networkAbility(network, logger, moduleString, flag) {
+
+        const exchange_options = {
+            'apiKey': OKXAuth.okx_apiKey,
+            'secret': OKXAuth.okx_apiSecret,
+            'password': OKXAuth.okx_apiPassword,
+            'enableRateLimit': true,
+        };
+
+        const exchange = new ccxt.okx(exchange_options);
+        if (OKXAuth.use_okx_proxy) {
+            exchange.https_proxy = OKXAuth.okx_proxy
+        }
+
+        let isAvailable = false;
+        let isLogged = true
+        while (!isAvailable) {
+            const networkInfo = await exchange.fetchCurrencies();
+
+            if (flag === 'w') {
+                const canWd = networkInfo.ETH.networks[network].info.canWd;
+                if (!canWd) {
+                    logger.info(`${moduleString} - Withdraw from OKX in ${network} network is DISABLED now`);
+                    if (isLogged) {
+                        isLogged = false
+                    }
+                } else {
+                    isAvailable = true;
+
+                }
+            }
+
+            if (flag === 'd') {
+                const canDep = networkInfo.ETH.networks[network].info.canDep;
+                if (!canDep) {
+                    logger.info(`${moduleString} - Deposit to OKX in ${network} network is DISABLED now`);
+
+                } else {
+                    isAvailable = true;
+
+                }
+            }
+
+            if (!isAvailable) {
+                await this.sleep(300000);
+            }
+        }
+
+        logger.info(`${moduleString} - ${flag === 'w' ? 'Withdraw' : 'Deposit'} in ${network} network is now available`);
+
+    }
+
+    async waitForGasTxStarknet(logger, tx, moduleString, account) {
+        let fee = await account.estimateInvokeFee(tx);
+        let overallFee = Number(fee.overall_fee) / (10**18);
+        if (overallFee > General.maxStarknetFee) {
+            logger.info(`${moduleString} - Gas is still high | Current ${overallFee} | Need ${General.maxStarknetFee}`);
+            await new Promise(resolve => setTimeout(resolve, 60 * 1000));
+            return await this.waitForGasTxStarknet(logger, tx, moduleString, account);
+        }
+        logger.info(`${moduleString} - Gas within normal limits | Current ${overallFee} | Max ${General.maxStarknetFee}`);
+        return true
+    }
     getTxCount() {
         const [minCount, maxCount] = this.config.counterTx;
         return Math.floor(Math.random() * (maxCount - minCount + 1)) + minCount;
+    }
+    async setupExactDealay(delay,moduelString,logger){
+        const [mindelay, maxdelay] = delay
+        const delaySeconds =  Math.floor(Math.random() * (maxdelay - mindelay + 1)) + mindelay
+        logger.info(`${moduelString} - Delaying ${delaySeconds} seconds before next action`);
+        await new Promise(resolve => setTimeout(resolve, delaySeconds * 1000));
+    }
+
+    getRandomEmail(){
+        const domains = ["@gmail.com", "@yahoo.com", "@outlook.com", "@hotmail.com"];
+        const randomDomain = domains[Math.floor(Math.random() * domains.length)];
+        const randomUsername = Math.random().toString(36).substring(2, 10);
+
+        return randomUsername + randomDomain;
+    }
+
+    getRandomSentence(countWrd,dict){
+        const minRange = Math.min(...countWrd);
+        const maxRange = Math.max(...countWrd);
+        const randomNum = Math.floor(Math.random() * (maxRange - minRange + 1)) + minRange;
+
+        const randomWords = [];
+        for (let i = 0; i < randomNum; i++) {
+            const randomIndex = Math.floor(Math.random() * dict.length);
+            randomWords.push(dict[randomIndex]);
+        }
+
+        let sentence;
+        sentence = randomWords.join(" ") + ".";
+
+        return sentence;
     }
 
     async getAmountTokenStark(rpc, walletAddress, tokenAddress, abiAddress) {
