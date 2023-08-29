@@ -1,4 +1,4 @@
-import fs from 'fs'
+dimport fs from 'fs'
 import Workers from './utils/workers.js';
 import { General } from './setting/config.js';
 
