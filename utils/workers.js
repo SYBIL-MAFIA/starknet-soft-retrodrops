@@ -5,9 +5,9 @@ import helpersFunctions from './helpersClass.js';
 
 
 export default class Workers {
-    constructor(mmKey, starkKeys, okecx, addressIndex,StarknetOkx) {
-        this.mmKey = mmKey;
-        this.starkKeys = starkKeys;
+    constructor(mmMnemonic, starkNetMnemonic, okecx, addressIndex,StarknetOkx) {
+        this.mmMnemonic = mmMnemonic;
+        this.starkNetMnemonic = starkNetMnemonic;
         this.okecx = okecx;
         this.addressIndex = addressIndex;
         this.getConfig = new ModuleConfig();
@@ -22,13 +22,13 @@ export default class Workers {
 
             const configOKX = this.getConfig.getConfigOKX();
             const configBridge = this.getConfig.getBridgeConfig();
-            const addressesAndKeys = await this.helpersFunctions.getETHAndStarkAddresses(this.mmKey,this.starkKeys)
+            const privateKeys = await this.helpersFunctions.getPrivateKeys(this.mmMnemonic,this.starkNetMnemonic)
+            const addressesAndKeys = await this.helpersFunctions.getETHAndStarkAddresses(privateKeys.mmPrivateKey,privateKeys.starkNetPrivateKey)
 
             await this.ActivateMainModules.withdrawalFromOkxToWallet(configOKX,configBridge,addressesAndKeys,logger,this.addressIndex)
             
             await this.ActivateMainModules.BridgeToStark(configBridge,addressesAndKeys,logger,this.addressIndex)
-            
-            
+
             await this.ActivateMainModules.startDexModules(addressesAndKeys.startPrivateKey,logger,this.addressIndex)
             
             await this.ActivateMainModules.BridgeFromStark(configBridge,addressesAndKeys,logger,this.addressIndex)

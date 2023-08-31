@@ -8,6 +8,7 @@ import { chainContract } from '../../utils/other.js';
 import addLPCallData from './utils/addLPCallData.js';
 import ConfirmTx from '../../utils/txPayload.js'
 import extraSwap from './utils/extraSwap.js';
+import {General} from "../../setting/config.js";
 
 export default class addLPMoudule extends SDKOptions {
     async execute(privateKeyStarknet, moduleName,logger,accountIndex) {
@@ -17,45 +18,62 @@ export default class addLPMoudule extends SDKOptions {
         const len = config.poolsForAddLP.length
         
         logger.info(`[Account ${accountIndex}][${moduleName}][addLP] - Starting add LP for ${len} pair(s)`)
-        for (let i = 0; i < len; i++ ){
+        for (let i = 0; i < len; i++ ) {
+            let attempts = General.attemptsStarkModules
+            while (attempts > 0) {
+                try {
+                    const tokens = helper.getPoolPair(config.poolsForAddLP)
+                    logger.info(`[Account ${accountIndex}][${moduleName}][addLP][Pair №${i + 1}] - Selected pair ${tokens.src}/${tokens.dst}`)
 
-            const tokens = helper.getPoolPair(config.poolsForAddLP)
-            logger.info(`[Account ${accountIndex}][${moduleName}][addLP][Pair №${i+1}] - Selected pair ${tokens.src}/${tokens.dst}`)
+                    let pool_id
+                    if (moduleName === 'MySwap') {
+                        pool_id = helper.getPoolId(tokens.src, tokens.dst)
+                    }
+                    const srcBalance = await helper.balanceCheckerForToken(tokens.src, this.address)
+                    const dstBalance = await helper.balanceCheckerForToken(tokens.dst, this.address)
 
-            let pool_id
-            if (moduleName === 'MySwap'){
-                pool_id = helper.getPoolId(tokens.src,tokens.dst)
+                    const amountToAddLP = helper.getRandomPercentAmount(srcBalance, config.persentToAddLP)
+                    const moduleString = `[Account ${accountIndex}][${moduleName}][addLP][Pair №${i + 1}]`
+                    logger.info(`${moduleString} - Amount for add ${Number(amountToAddLP) / (10 ** 18)}`)
+
+                    const abies = helper.callAbi(moduleName)
+
+                    const minAmountValue = await new minAmount(tokens.src, tokens.dst, moduleName, pool_id, abies).execute(amountToAddLP)
+
+                    await new extraSwap(srcBalance, dstBalance, tokens.src, tokens.dst, minAmountValue, moduleName, abies, pool_id, this.address, this.account, this.provider, logger, moduleString).execute()
+
+
+                    const approveDataSrcToken = new CallApprove(chainContract.Starknet[tokens.src], chainContract.Starknet[tokens.dst], amountToAddLP, moduleName).execute()
+
+                    const approveDataDstToken = new CallApprove(chainContract.Starknet[tokens.dst], chainContract.Starknet[tokens.dst], minAmountValue.maxDstAmount, moduleName).execute()
+
+                    const addLPdata = new addLPCallData(chainContract.Starknet[tokens.src], chainContract.Starknet[tokens.dst], amountToAddLP, minAmountValue, this.address, moduleName).execute()
+
+                    const txPayload = [
+                        approveDataSrcToken,
+                        approveDataDstToken,
+                        addLPdata
+                    ]
+
+
+                    await new ConfirmTx(txPayload, this.account, this.provider, logger, `[Account ${accountIndex}][${moduleName}][addLP][Pair №${i + 1}]`).execute()
+                    await helper.setupDelay(logger, `[Account ${accountIndex}][${moduleName}][addLP][Pair №${i + 1}]`)
+                    break
+                } catch (e) {
+                    logger.info(`Error addLP ${moduleName} for pair №${Number(i) + 1}: ${e}`);
+
+                    attempts--
+                    if (attempts > 0) {
+                        logger.info(`[Account ${accountIndex}][${moduleName}][addLP][Pair №${Number(i) + 1}] - Retrying... (${attempts} attempts left)`);
+                        await helper.setupExactDealay(General.delayBeforeNextRetry, `[Account ${accountIndex}][${moduleName}][addLP][Pair №${Number(i) + 1}]`, logger);
+                    } else {
+                        logger.info(`[Account ${accountIndex}][${moduleName}][addLP][Pair №${Number(i) + 1}] - Maximum retry count reached. Stopping retries for this pair.`);
+                        logger.info(`[Account ${accountIndex}][${moduleName}] - Data save successfully`)
+                        await helper.setupDelay(logger, `[Account ${accountIndex}][${moduleName}][addLP][Pair №${Number(i) + 1}]`);
+                        break
+                    }
+                }
             }
-            const srcBalance = await helper.balanceCheckerForToken(tokens.src,this.address)
-            const dstBalance = await helper.balanceCheckerForToken(tokens.dst,this.address)
-            
-            const amountToAddLP = helper.getRandomPercentAmount(srcBalance,config.persentToAddLP) 
-            const moduleString = `[Account ${accountIndex}][${moduleName}][addLP][Pair №${i+1}]`
-            logger.info(`${moduleString} - Amount for add ${Number(amountToAddLP)/(10**18)}`)
-            
-            const abies  =  helper.callAbi(moduleName)
-            
-            const minAmountValue = await new minAmount(tokens.src,tokens.dst,moduleName,pool_id,abies).execute(amountToAddLP)
-            
-            await new extraSwap(srcBalance,dstBalance,tokens.src,tokens.dst,minAmountValue,moduleName,abies,pool_id,this.address,this.account,this.provider,logger,moduleString).execute()
-            
-
-            const approveDataSrcToken = new CallApprove(chainContract.Starknet[tokens.src],chainContract.Starknet[tokens.dst],amountToAddLP,moduleName).execute()
-
-            const approveDataDstToken = new CallApprove(chainContract.Starknet[tokens.dst],chainContract.Starknet[tokens.dst],minAmountValue.maxDstAmount,moduleName).execute()
-
-            const addLPdata = new addLPCallData(chainContract.Starknet[tokens.src],chainContract.Starknet[tokens.dst],amountToAddLP,minAmountValue,this.address,moduleName).execute()
-            
-            const txPayload = [
-                approveDataSrcToken,
-                approveDataDstToken,
-                addLPdata
-              ]
-              
-            
-            
-            await new ConfirmTx(txPayload,this.account,this.provider,logger,`[Account ${accountIndex}][${moduleName}][addLP][Pair №${i+1}]`).execute()
-            await helper.setupDelay(logger,`[Account ${accountIndex}][${moduleName}][addLP][Pair №${i+1}]`)
         }
     }
 }
