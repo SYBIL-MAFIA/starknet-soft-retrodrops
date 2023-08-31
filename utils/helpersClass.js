@@ -1,12 +1,9 @@
 import { chainContract, rpc, poolIds } from './other.js';
-import {HDNodeWallet, Mnemonic, Wallet} from 'ethers';
-import { mnemonicToSeedSync }  from '@scure/bip39';
-import { HDKey }  from "@scure/bip32";
 import { Contract, RpcProvider,ec,CallData,hash } from 'starknet';
 import { abiMySwapTokensAbi,abiJediSwapStarknetMain,abiJediSwapStarknetReserves,abi_10KSwapStarknetMain,abi_10KSwapStarknetReserves,abiSithSwapStarknetMain,abiMySwapStarknet } from "./abi.js"
-import Web3, {utils} from 'web3';
+import Web3 from 'web3';
 import {General, OKXAuth} from "../setting/config.js";
-import {getBraavosAddress} from "./calculateBraavosAddress.js";
+import {calculateBraavosAddress} from "./calculateBraavosAddress.js";
 import ccxt from "ccxt";
 import crypto from 'crypto';
 
@@ -25,19 +22,6 @@ export default class helpersFunctions {
         let randomNumber = BigInt('0x' + randomBytes.toString('hex'));
         randomNumber = randomNumber % maxNumber;
         return randomNumber.toString().padStart(12, '0');
-    }
-
-    async getPrivateKeys(mmMnemonic,StarkNetMnemonic) {
-        let mmPrivateKey,starkNetPrivateKey
-        if (mmMnemonic !== undefined){
-             mmPrivateKey = await this.getPrivateKeyFromMnemonicEVM(mmMnemonic)
-        }
-
-        if (StarkNetMnemonic !== undefined){
-             starkNetPrivateKey = await this.getPrivateKeyFromMnemonicStarkNet(StarkNetMnemonic)
-        }
-
-        return {mmPrivateKey,starkNetPrivateKey}
     }
 
     async waitForGasEVM(logger,moduleString){
@@ -59,52 +43,6 @@ export default class helpersFunctions {
         return new Promise(resolve => setTimeout(resolve, ms));
     }
 
-    async getPrivateKeyFromMnemonicEVM (mmMnemonic) {
-        try {
-            const wallet = await HDNodeWallet.fromPhrase(mmMnemonic, "", "m/44'/60'/0'/0/0");
-
-            return {
-                mnemonic: mmMnemonic,
-                address: wallet.address,
-                privateKey: wallet.privateKey
-            };
-        } catch (e) {
-            console.log(e)
-            throw new Error(e)
-        }
-    }
-
-    async getPrivateKeyFromMnemonicStarkNet(StarkNetMnemonic){
-            switch (General.walletName){
-                case "Argent_X":
-                    return await this.getPrivateKeyFromMnemonicStarkNetArgent(StarkNetMnemonic)
-                case "Braavos":
-                    return await this.getPrivateKeyFromMnemonicStarkNetBraavos(StarkNetMnemonic)
-            }
-    }
-
-    async getPrivateKeyFromMnemonicStarkNetArgent (StarknetMnemonic) {
-
-        try {
-            const mnemo = Mnemonic.fromPhrase(StarknetMnemonic);
-            const signer = HDNodeWallet.fromMnemonic(mnemo);
-            const masterNode = HDNodeWallet.fromSeed(signer.privateKey);
-            const childNode = masterNode.derivePath("m/44'/9004'/0'/0/0");
-
-            return '0x' + ec.starkCurve.grindKey(childNode.privateKey).toString();
-        }catch (e) {
-            console.log(e)
-            throw new Error(e)
-        }
-    };
-
-    async getPrivateKeyFromMnemonicStarkNetBraavos(StarkNetMnemonic){
-        const seed = mnemonicToSeedSync(StarkNetMnemonic);
-        const hdKey = HDKey.fromMasterSeed(seed);
-        const hdKeyDerived = hdKey.derive("m/44'/9004'/0'/0/0");
-
-        return "0x" + ec.starkCurve.grindKey(hdKeyDerived.privateKey);
-    }
     async  networkAbility(network, logger, moduleString, flag) {
 
         const exchange_options = {
@@ -283,7 +221,7 @@ export default class helpersFunctions {
        }catch (error) {
             console.log('ошибка')
             console.log(error)
-            this.getPoolPair(pools)
+            getPoolPair(pools)
         }
     }
 
@@ -297,6 +235,7 @@ export default class helpersFunctions {
             case "USDT":
                 return await this.getAmountTokenStark(rpc.Starknet,address, chainContract.Starknet.USDT,chainContract.Starknet.ABI);
             case 'ETHUSDC':
+         
                 return await this.getAmountTokenStark(rpc.Starknet,address,chainContract.Starknet[moduleName].ETHUSDC,chainContract.Starknet.ABI)
             case 'ETHUSDT':
                 return await this.getAmountTokenStark(rpc.Starknet,address,chainContract.Starknet[moduleName].ETHUSDT,chainContract.Starknet.ABI)
@@ -342,17 +281,15 @@ export default class helpersFunctions {
     }
 
     async getETHAndStarkAddresses(mmKey,startPrivateKey){
-        let ethAddress, starkAddress
-        if (mmKey !== undefined){ethAddress = await this.getETHAddress(mmKey)}
-        if (startPrivateKey !== undefined){starkAddress = await this.getStarknetAddress(startPrivateKey)}
+        const ethAddress = await this.getETHAddress(mmKey)
+        const starkAddress = await this.getStarknetAddress(startPrivateKey)
 
         return {ethAddress,mmKey,starkAddress,startPrivateKey}
     }
 
     
     async getETHAddress(mmKey){
-        const web3 = new Web3(new Web3.providers.HttpProvider(rpc.ARB));
-        mmKey = mmKey.privateKey
+        const web3 = new Web3(rpc.ARB);
         const account = web3.eth.accounts.privateKeyToAccount(mmKey.trim());
         return account.address
     }
@@ -362,28 +299,28 @@ export default class helpersFunctions {
             case "Argent_X":
                 return await this.getArgentXWallet(startPrivateKey)
             case 'Braavos':
-                return getBraavosAddress(startPrivateKey);
+                return calculateBraavosAddress(startPrivateKey);
         }
     }
 
     async getArgentXWallet(key){
-        const argentProxyClassHash = "0x25ec026985a3bf9d0cc1fe17326b245dfdc3ff89b8fde106542a3ea56c5a918";
-        const argentAccountClassHash = "0x033434ad846cdd5f23eb73ff09fe6fddd568284a0fb7d1be20ee482f044dabe2";
+        const argentXproxyClassHash = "0x25ec026985a3bf9d0cc1fe17326b245dfdc3ff89b8fde106542a3ea56c5a918";
+        const argentXaccountClassHash = "0x033434ad846cdd5f23eb73ff09fe6fddd568284a0fb7d1be20ee482f044dabe2";
 
-        const publicKey = ec.starkCurve.getStarkKey(key);
-        const AXproxyConstructorCallData = CallData.compile({
-            implementation: argentAccountClassHash,
+        const StarkpublicKey = ec.starkCurve.getStarkKey(key);
+
+        const ConstructorCallData = CallData.compile({
+            implementation: argentXaccountClassHash,
             selector: hash.getSelectorFromName("initialize"),
-            calldata: CallData.compile({ signer: publicKey, guardian: "0" }),
+            calldata: CallData.compile({ signer: StarkpublicKey, guardian: "0" }),
         });
 
         return hash.calculateContractAddressFromHash(
-            publicKey,
-            argentProxyClassHash,
-            AXproxyConstructorCallData,
+            StarkpublicKey,
+            argentXproxyClassHash,
+            ConstructorCallData,
             0
         );
-
     }
 
     async waitForUpdateBalanceStark(address,logger,accountIndex,balanceCash,moduleString){

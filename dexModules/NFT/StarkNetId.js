@@ -44,7 +44,7 @@ export default class StarkNetIdClass extends SDKOptions {
                     ]
 
                     await new txConfirmation(txPayload,this.account,this.provider,logger,`${moduleString}`).execute()
-                    break
+
                 }catch (e) {
                     logger.info(`${moduleString} - Error  ${e}`);
                     attempts--

@@ -18,7 +18,7 @@ export class General {
 если хотите минтить нфт, до нужно ставить диапозон [от скольки,до скольки] - например [1,5]
  */
   static StarkVerseNFTToBuy = 0 // сколько нфт купить https://starkverse.art/ дешевые транзакции за 0.2$
-  static StarkNerIDNFTToBuy = [3,4] // сколько нфт купить https://app.starknet.id/identities, дешевые транзакции
+  static StarkNerIDNFTToBuy = 0 // сколько нфт купить https://app.starknet.id/identities, дешевые транзакции
 
   static maxGwei = 22 // гвей для перевода из EVM сетей в Starknet
   static maxStarknetFee = 0.0006 // максимальная цена транзакции для ЛЮБОЙ транзакции в сети Starknet
@@ -33,7 +33,7 @@ export class General {
 }
 
 export class Modules {
-  static module = ['Dmail','StarkVerse','StarkNetId']
+  static module = ['JediSwap']
   //   ['_10KSwap','JediSwap','SithSwap','MySwap','Dmail','StarkVerse','StarkNetId']
 }
 
@@ -63,7 +63,7 @@ export class OKXAuth {
 
 export class Dmail{
 
-  static counterTx = [1, 1] // количество транзакций
+  static counterTx = [5, 7] // количество транзакций
   static delay = General.DELAY
   static worldsCount = [1, 2] // количество слов в письме, больше двух не рекомендуется
 }
@@ -80,9 +80,8 @@ export class Bridge {
   static swapAllBalanceToStark = false // включив этот параметр, для моста Orbiter, будем переводиться максимальная сумма доступная для бриджа
   static  amountToBridgeToStark = [0.001,0.002] // минимум 0.005
   
-  static swapAllBalanceFromStark = true // включив этот параметр, для моста Orbiter, будем переводиться максимальная сумма доступная для бриджа
+  static swapAllBalanceFromStark = false // включив этот параметр, для моста Orbiter, будем переводиться максимальная сумма доступная для бриджа
   static  amountToBridgeFromStark = [0.001,0.002] // минимум 0.005
-  static amountToSaveOnWalletStark = [0,0] // хотим ли мы оставить ETH в сети старкнет, перед выводом на окекс, если оставлять не нужно, то пишем [0,0]
 }
 
 
