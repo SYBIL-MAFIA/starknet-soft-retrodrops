@@ -20,7 +20,7 @@ export default class BridgeToStar {
           try {
               this.logger.info(`[Account ${this.addressIndex}][OrbiterBridge][toStarknet] - Start bridging from Arbitrum to Starknet`)
               let explorer = 'https://arbiscan.io/tx/'
-              let web3 = new Web3(rpc.ARB);
+              let web3 =new Web3(new Web3.providers.HttpProvider(rpc.ARB));
 
               let contract = new web3.eth.Contract(ORBITER_ABI, '0xd9d74a29307cc6fc8bf424ee4217f1a587fbc8dc');
 

@@ -4,7 +4,7 @@ import { CallData,RpcProvider,Account } from "starknet";
 import { rpc } from "../utils/other.js";
 import Web3 from "web3";
 import MakeSwap from "../dexModules/swapModule/utils/makeSwap.js";
-import { General } from "../setting/config.js";
+import {Bridge, General} from "../setting/config.js";
 
 export default class BridgeFromStar{
     constructor(config, addressesAndKeys,logger,addressIndex) {
@@ -86,23 +86,14 @@ export default class BridgeFromStar{
     }
 
     async setupAmount() {
-        let balance;
+        let balance,amountToSaveOnWallet;
         if (this.config.swapAllBalanceFromStark) {
             balance = await this.helpersFunctions.balanceCheckerForToken('ETH', this.addressesAndKeys.starkAddress, undefined);
-
-            // if (balance < (0.005 * 10** 18)) {
-            //     const errorMessage = `[Account ${this.addressIndex}][OrbiterBridge][fromStark] - Not enough balance to bridge, minimum 0.005, actual amount ${Number(balance) /(10 ** 18)}`;
-            //     this.logger.info(errorMessage);
-            //     throw new Error(errorMessage);
-            // }
-            return balance
+            amountToSaveOnWallet = (Math.random() * (Bridge.amountToSaveOnWalletStark[1] - Bridge.amountToSaveOnWalletStark[0]) + Bridge.amountToSaveOnWalletStark[0]).toFixed(5);
+            amountToSaveOnWallet = amountToSaveOnWallet * 10 ** 18
+            return (balance - BigInt(amountToSaveOnWallet))
         } else {
             balance = (Math.random() * (this.config.amountToBridgeFromStark[1] - this.config.amountToBridgeFromStark[0]) + this.config.amountToBridgeFromStark[0]).toFixed(5);
-            // if (balance < 0.005 * 10 ** 18) {
-            //     const errorMessage = `[Account ${this.addressIndex}][OrbiterBridge][fromStark] - Not enough balance to bridge, minimum 0.005, actual amount ${balance}`;
-            //     this.logger.info(errorMessage);
-            //     throw new Error(errorMessage);
-            // }
             return BigInt(balance * 10** 18);
         }
     }

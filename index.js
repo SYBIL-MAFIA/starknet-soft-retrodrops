@@ -5,12 +5,12 @@ import { General } from './setting/config.js';
 
 export const loadWallets = async () => {
   try {
-      const mm_keys = fs.readFileSync('./data/mm_keys.txt', "utf8")
+      const mm_mnemonics = fs.readFileSync('./data/mm_mnemonics.txt', "utf8")
           .split("\n")
           .map(row => row.trim())
           .filter(row => row !== "");
 
-      const stark_keys = fs.readFileSync('./data/stark_keys.txt', "utf-8")
+      const stark_mnemonics = fs.readFileSync('./data/stark_mnemonics.txt', "utf-8")
           .split("\n")
           .map(row => row.trim())
           .filter(row => row !== "");
@@ -26,7 +26,7 @@ export const loadWallets = async () => {
           .filter(row => row !== "");
 
 
-      return { mm_keys, stark_keys, okecx, withdrawalAddressOkx };
+      return { mm_mnemonics, stark_mnemonics, okecx, withdrawalAddressOkx };
   } catch (err) {
       console.error(`Error while loading wallet data: ${err.message}`);
       throw err;
@@ -35,24 +35,25 @@ export const loadWallets = async () => {
 
 const main = async () => {
   let addressIndex = 0; 
-    const values = await loadWallets()
-  const mmKeys =  values.mm_keys;
-  const starkKeys = values.stark_keys
+  const values = await loadWallets()
+  const mmMnemonics =  values.mm_mnemonics;
+  const starkMnemonics = values.stark_mnemonics
   const okecx = values.okecx
   const withdrawalAddressOkx = values.withdrawalAddressOkx
   const groups = [];
-  for (let i = 0; i < mmKeys.length; i += General.threads_counter) {
-    groups.push(mmKeys.slice(i, i + General.threads_counter));
+  for (let i = 0; i < starkMnemonics.length; i += General.threads_counter) {
+    groups.push(starkMnemonics.slice(i, i + General.threads_counter));
   }
 
   for (const group of groups) {
     const promises = [];
     
-    for (const mmKey of group) {
-      const starkKey = starkKeys.shift();
+    for (const starkMnemonic of group) {
+
+      const mmMnemonic = mmMnemonics.shift();
       const okecxKey = okecx.shift();
       const StarlnetOkx = withdrawalAddressOkx.shift()
-      const workerInstance = new Workers(mmKey, starkKey, okecxKey, addressIndex,StarlnetOkx);
+      const workerInstance = new Workers(mmMnemonic, starkMnemonic, okecxKey, addressIndex,StarlnetOkx);
       promises.push(workerInstance.execute());
   
       addressIndex++; 

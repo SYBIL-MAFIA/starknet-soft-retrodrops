@@ -44,29 +44,34 @@ export default class ModuleManager {
 
              moduleConfig = new ModuleConfig(moduleName, "MAIN");
              config = moduleConfig.getConfig();
-        }
-        if (moduleName === 'Dmail'){
-            await this.dmail.execute(logger,accountIndex,privateKey)
+            if (config.swapModule === true && config.swapModule !== undefined) {
+                await this.SwapModuleClass.execute(privateKey, moduleName,logger,accountIndex,isFirstSwap);
+            }
+
+            if (config.addLP === true && config.addLP !== undefined) {
+                await this.addLPMoudule.execute(privateKey,moduleName,logger,accountIndex)
+            }
+
+            if (config.burnLP === true && config.burnLP !== undefined) {
+                await this.burnLP.execute(privateKey,moduleName,logger,accountIndex)
+            }
+
+        } else {
+            if (moduleName === 'Dmail'){
+                await this.dmail.execute(logger,accountIndex,privateKey)
+            }
+
+            if ((moduleName === 'StarkVerse') && (General.StarkVerseNFTToBuy !== 0)){
+                await this.starkVerse.execute(privateKey,logger,accountIndex)
+            }
+
+            if ((moduleName === 'StarkNetId') && (General.StarkNerIDNFTToBuy !== 0)){
+                await this.starknetID.execute(privateKey,logger,accountIndex)
+            }
         }
 
-        if ((moduleName === 'StarkVerse') && (General.StarkVerseNFTToBuy !== 0)){
-            await this.starkVerse.execute(privateKey,logger,accountIndex)
-        }
 
-        if ((moduleName === 'StarkNetId') && (General.StarkNerIDNFTToBuy !== 0)){
-            await this.starknetID.execute(privateKey,logger,accountIndex)
-        }
         
-        if (config.swapModule === true && config.swapModule !== undefined) {
-            await this.SwapModuleClass.execute(privateKey, moduleName,logger,accountIndex,isFirstSwap); 
-        }
 
-        if (config.addLP === true && config.addLP !== undefined) {
-            await this.addLPMoudule.execute(privateKey,moduleName,logger,accountIndex)
-        }
-
-        if (config.burnLP === true && config.burnLP !== undefined) {
-            await this.burnLP.execute(privateKey,moduleName,logger,accountIndex)
-        }
     }
 }
