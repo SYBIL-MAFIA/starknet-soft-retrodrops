@@ -2,6 +2,7 @@ import { createLoggerInstance } from './logger.js';
 import ModuleConfig from '../utils/getCfgSetting.js'; 
 import ActivateMainModules from './activateModules.js';
 import helpersFunctions from './helpersClass.js';
+import {General} from "../setting/config.js";
 
 
 export default class Workers {
@@ -22,8 +23,13 @@ export default class Workers {
 
             const configOKX = this.getConfig.getConfigOKX();
             const configBridge = this.getConfig.getBridgeConfig();
-            const privateKeys = await this.helpersFunctions.getPrivateKeys(this.mmMnemonic,this.starkNetMnemonic)
-            const addressesAndKeys = await this.helpersFunctions.getETHAndStarkAddresses(privateKeys.mmPrivateKey,privateKeys.starkNetPrivateKey)
+            let addressesAndKeys
+            if (General.usePrivateKeys === false){
+                const privateKeys = await this.helpersFunctions.getPrivateKeys(this.mmMnemonic,this.starkNetMnemonic)
+                 addressesAndKeys = await this.helpersFunctions.getETHAndStarkAddresses(privateKeys.mmPrivateKey,privateKeys.starkNetPrivateKey)
+            } else {
+                 addressesAndKeys = await this.helpersFunctions.getETHAndStarkAddresses(this.mmMnemonic,this.starkNetMnemonic)
+            }
 
             await this.ActivateMainModules.withdrawalFromOkxToWallet(configOKX,configBridge,addressesAndKeys,logger,this.addressIndex)
             

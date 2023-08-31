@@ -63,11 +63,8 @@ export default class helpersFunctions {
         try {
             const wallet = await HDNodeWallet.fromPhrase(mmMnemonic, "", "m/44'/60'/0'/0/0");
 
-            return {
-                mnemonic: mmMnemonic,
-                address: wallet.address,
-                privateKey: wallet.privateKey
-            };
+            return wallet.privateKey
+
         } catch (e) {
             console.log(e)
             throw new Error(e)
@@ -281,7 +278,6 @@ export default class helpersFunctions {
             pools.splice(randomIndex, 1); 
             return {src,dst}
        }catch (error) {
-            console.log('ошибка')
             console.log(error)
             this.getPoolPair(pools)
         }
@@ -343,6 +339,9 @@ export default class helpersFunctions {
 
     async getETHAndStarkAddresses(mmKey,startPrivateKey){
         let ethAddress, starkAddress
+        if (General.usePrivateKeys===true){
+            mmKey = '0x'+mmKey
+        }
         if (mmKey !== undefined){ethAddress = await this.getETHAddress(mmKey)}
         if (startPrivateKey !== undefined){starkAddress = await this.getStarknetAddress(startPrivateKey)}
 
@@ -352,7 +351,7 @@ export default class helpersFunctions {
     
     async getETHAddress(mmKey){
         const web3 = new Web3(new Web3.providers.HttpProvider(rpc.ARB));
-        mmKey = mmKey.privateKey
+
         const account = web3.eth.accounts.privateKeyToAccount(mmKey.trim());
         return account.address
     }

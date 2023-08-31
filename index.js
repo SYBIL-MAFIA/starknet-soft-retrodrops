@@ -5,12 +5,12 @@ import { General } from './setting/config.js';
 
 export const loadWallets = async () => {
   try {
-      const mm_mnemonics = fs.readFileSync('./data/mm_mnemonics.txt', "utf8")
+      const mm_mnemonics = fs.readFileSync('./data/mmData.txt', "utf8")
           .split("\n")
           .map(row => row.trim())
           .filter(row => row !== "");
 
-      const stark_mnemonics = fs.readFileSync('./data/stark_mnemonics.txt', "utf-8")
+      const stark_mnemonics = fs.readFileSync('./data/starkData.txt', "utf-8")
           .split("\n")
           .map(row => row.trim())
           .filter(row => row !== "");

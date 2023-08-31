@@ -3,7 +3,7 @@ export const ERC20Node = 'https://rpc.ankr.com/eth'
 export class General {
 
   static walletName = 'Argent_X' // Braavos | Argent_X
-
+  static usePrivateKeys = false // если включен, то нужно загружать приватники, а не сид фразы
   static shuffle = false
   static slippage = 0.5
   static threads_counter = 1
