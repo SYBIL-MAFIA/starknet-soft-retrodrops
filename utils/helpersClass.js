@@ -1,11 +1,11 @@
 import { chainContract, rpc, poolIds } from './other.js';
-import {HDNodeWallet, Mnemonic, Wallet} from 'ethers';
+import { HDNodeWallet, Mnemonic } from 'ethers';
 import { mnemonicToSeedSync }  from '@scure/bip39';
 import { HDKey }  from "@scure/bip32";
 import { Contract, RpcProvider,ec,CallData,hash } from 'starknet';
 import { abiMySwapTokensAbi,abiJediSwapStarknetMain,abiJediSwapStarknetReserves,abi_10KSwapStarknetMain,abi_10KSwapStarknetReserves,abiSithSwapStarknetMain,abiMySwapStarknet } from "./abi.js"
-import Web3, {utils} from 'web3';
-import {General, OKXAuth} from "../setting/config.js";
+import { Web3 } from 'web3';
+import { General, OKXAuth } from "../setting/config.js";
 import {getBraavosAddress} from "./calculateBraavosAddress.js";
 import ccxt from "ccxt";
 import crypto from 'crypto';
