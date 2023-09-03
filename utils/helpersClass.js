@@ -2,7 +2,7 @@ import { chainContract, rpc, poolIds } from './other.js';
 import { HDNodeWallet, Mnemonic } from 'ethers';
 import { mnemonicToSeedSync }  from '@scure/bip39';
 import { HDKey }  from "@scure/bip32";
-import { Contract, RpcProvider,ec,CallData,hash } from 'starknet';
+import {Contract, RpcProvider, ec, CallData, hash, Provider, constants, Account} from 'starknet';
 import { abiMySwapTokensAbi,abiJediSwapStarknetMain,abiJediSwapStarknetReserves,abi_10KSwapStarknetMain,abi_10KSwapStarknetReserves,abiSithSwapStarknetMain,abiMySwapStarknet } from "./abi.js"
 import { Web3 } from 'web3';
 import { General, OKXAuth } from "../setting/config.js";
