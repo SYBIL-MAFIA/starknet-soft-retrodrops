@@ -49,20 +49,49 @@ export default class DmailClass {
             const sentToSend = helper.getRandomSentence(Dmail.worldsCount, wordsForEmail);
             logger.info(`${moduleSting}[tx №${Number(i) + 1}] - Msg to Send (${sentToSend})`);
 
-хуй
+            let emailToSendHas = this.hashString(emailToSend)
+            let emailToSendEncoded =  ((this.encoder(`${emailToSendHas}`))).substring(0, 65)
+
+            let NewAddress = `${this.removeLeadingZeroes(address)}@dmail.ai`
+            let NewAddressHash = this.hashString(NewAddress)
+            let NewAddressEncoded = ((this.encoder(`${NewAddressHash}`))).substring(0, 65)
+
         
             const txPayload = {
-                contractAddress: "0x0454f0bd015e730e5adbb4f080b075fdbf55654ff41ee336203aa2e1ac4d4309",
-                entrypoint: "transaction",
-                calldata: CallData.compile({
-                    emailToSend,
-                    sentToSend
-                })
+                    contractAddress: "0x0454f0bd015e730e5adbb4f080b075fdbf55654ff41ee336203aa2e1ac4d4309",
+                    entrypoint: "transaction",
+                    calldata: CallData.compile({
+                        NewAddressEncoded,
+                        emailToSendEncoded
+                    })
             };
 
             await new txConfirmation(txPayload, account, provider, logger, `${moduleSting}[tx №${Number(i) + 1}]`).execute();
 
 
+    }
+    
+    hashString(str) {
+        return crypto.createHash('sha256').update(str).digest('hex');
+    }
+
+
+     encoder(message) {
+        if ("" === message)
+            return "";
+        let t = [];
+        t.push("0x");
+        for (let n = 0; n < message.length; n++)
+            t.push(message.charCodeAt(n).toString(16));
+        return t.join("")
+    }
+
+    removeLeadingZeroes(str) {
+        if (str[2] !== '0') {
+            return str;
+        }
+        const newStr = str.slice(0, 2) + str.slice(3);
+        return this.removeLeadingZeroes(newStr);
     }
 
 
