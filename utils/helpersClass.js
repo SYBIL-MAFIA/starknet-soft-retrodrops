@@ -9,6 +9,8 @@ import { General, OKXAuth } from "../setting/config.js";
 import {getBraavosAddress} from "./calculateBraavosAddress.js";
 import ccxt from "ccxt";
 import crypto from 'crypto';
+import MakeSwap from "../dexModules/swapModule/utils/makeSwap.js";
+import ConfirmTx from "./txPayload.js";
 
 
 export default class helpersFunctions {
