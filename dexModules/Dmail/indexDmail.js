@@ -3,6 +3,7 @@ import txConfirmation from "../../utils/txPayload.js";
 import {Dmail, General} from "../../setting/config.js";
 import {RpcProvider, Account, CallData} from 'starknet'
 import {rpc,wordsForEmail} from "../../utils/other.js";
+import crypto from "crypto";
 
 export default class DmailClass {
     async execute(logger, accountIndex,privateKey) {
