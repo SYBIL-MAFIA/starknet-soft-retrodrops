@@ -30,7 +30,19 @@ export default class txConfirmation {
                     this.logger.error(`${this.moduleString} - Error while fetching nonce: ${e}`);
                 }
 
-                let executeHash = await account.execute(this.txPayload);
+                let executeHash;
+                while (true) {
+                    try {
+                        executeHash = await account.execute(this.txPayload);
+                        break;
+                    } catch (e) {
+                        if (e.message.includes('Transaction with hash')) {
+                            await new Promise(resolve => setTimeout(resolve, 15 * 1000));
+                        } else {
+                            throw new Error(`${this.moduleString} - An error while executing tx\n`);
+                        }
+                    }
+                }
                 this.logger.info(`${this.moduleString} - Send TX: ${explorerTx.Starknet + executeHash.transaction_hash}`);
                 this.logger.info(`${this.moduleString} - Waiting for tx status...`);
 
