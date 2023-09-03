@@ -49,7 +49,8 @@ export default class DmailClass {
             const sentToSend = helper.getRandomSentence(Dmail.worldsCount, wordsForEmail);
             logger.info(`${moduleSting}[tx №${Number(i) + 1}] - Msg to Send (${sentToSend})`);
 
-
+хуй
+        
             const txPayload = {
                 contractAddress: "0x0454f0bd015e730e5adbb4f080b075fdbf55654ff41ee336203aa2e1ac4d4309",
                 entrypoint: "transaction",
