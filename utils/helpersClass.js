@@ -58,6 +58,31 @@ export default class helpersFunctions {
     async sleep(ms) {
         return new Promise(resolve => setTimeout(resolve, ms));
     }
+    async checkTokensForExtraSwap(addressesAndKeys,logger,addressIndex) {
+        const provider = new Provider({ sequencer: { network: constants.NetworkName.SN_MAIN } })
+        const account = new Account(provider, addressesAndKeys.starkAddress, addressesAndKeys.startPrivateKey);
+
+        logger.info(`[Account ${addressIndex}][SWAPnonZeroTokens] - Checking token balances`)
+        const balances = await this.getBalance(addressesAndKeys.starkAddress);
+        const moduleName = 'JediSwap';
+        const tokensToSwap = [
+            { token: 'USDC', balance: balances.USDC, threshold: General.ethBalance * 10**6 },
+            { token: 'USDT', balance: balances.USDT, threshold: General.usdtBalance * 10**6 },
+            { token: 'WBTC', balance: balances.WBTC, threshold: General.wbtcBalance * 10**8 },
+            { token: 'DAI', balance: balances.DAI, threshold: General.daiBalance * 10**18 },
+        ];
+
+        const pool_id = 0;
+
+        for (const { token, balance, threshold } of tokensToSwap) {
+            if (balance > threshold) {
+                logger.info(`[Account ${addressIndex}][SWAPnonZeroTokens][${token}] - A token with a balance satisfying the condition was found `)
+                const txPayload = await new MakeSwap(balance, token, 'ETH', pool_id, moduleName, addressesAndKeys.starkAddress, provider, account).execute();
+                await new ConfirmTx(txPayload, account, provider, logger, `[Account ${addressIndex}][${moduleName}][SWAPnonZeroTokens][${token}]`).execute();
+                await this.setupDelay(logger, `[Account ${addressIndex}][${moduleName}][SWAPnonZeroTokens][${token}]`);
+            }
+        }
+    }
 
     async getPrivateKeyFromMnemonicEVM (mmMnemonic) {
         try {
