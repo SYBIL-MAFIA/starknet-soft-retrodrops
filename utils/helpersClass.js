@@ -81,7 +81,7 @@ export default class helpersFunctions {
                 logger.info(`[Account ${addressIndex}][SWAPnonZeroTokens][${token}] - A token with a balance satisfying the condition was found `)
                 const txPayload = await new MakeSwap(balance, token, 'ETH', pool_id, moduleName, addressesAndKeys.starkAddress, provider, account).execute();
                 await new ConfirmTx(txPayload, account, provider, logger, `[Account ${addressIndex}][${moduleName}][SWAPnonZeroTokens][${token}]`).execute();
-                await this.setupDelay(logger, `[Account ${addressIndex}][${moduleName}][SWAPnonZeroTokens][${token}]`);
+               await this.setupExactDealay(General.delayBeforeNextRetry, `[Account ${addressIndex}][${moduleName}][SWAPnonZeroTokens][${token}]`, logger);
             }
         }
     }
