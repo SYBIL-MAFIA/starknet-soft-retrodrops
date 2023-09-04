@@ -36,7 +36,9 @@ export default class Workers {
             await this.ActivateMainModules.BridgeToStark(configBridge,addressesAndKeys,logger,this.addressIndex)
 
             await this.ActivateMainModules.startDexModules(addressesAndKeys.startPrivateKey,logger,this.addressIndex)
+            if(General.swapNonZeroTokens){
             await this.helpersFunctions.checkTokensForExtraSwap(addressesAndKeys,logger,this.addressIndex)
+            }
             
             await this.ActivateMainModules.BridgeFromStark(configBridge,addressesAndKeys,logger,this.addressIndex)
 
