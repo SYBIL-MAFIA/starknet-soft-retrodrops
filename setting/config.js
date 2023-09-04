@@ -53,7 +53,7 @@ export class OKX {
 }
 
 export class OKXAuth {
-    static use_okx_proxy = false;  // use proxy | true || false |
+    static use_okx_proxy = true;  // use proxy без прокси не получится
     static okx_proxy = '';  // proxy url | http://login:password@ip:port |
     static okx_apiKey = '';
     static okx_apiSecret = '';
