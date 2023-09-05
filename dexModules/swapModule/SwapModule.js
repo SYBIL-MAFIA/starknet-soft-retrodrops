@@ -15,13 +15,13 @@ export default class SwapModuleClass extends SDKOptions {
 
         const helper = new helpers(config);
         const counterTx = helper.getTxCount();
-        const balances = await helper.getBalance(this.address);
         logger.info(`[Account ${accountIndex}][${moduleName}][SWAP] - Selected tx count ${counterTx}`)
         for (let i = 0; i < counterTx; i++) {
             let attempts = General.attemptsStarkModules
 
             while (attempts > 0) {
                 try {
+                    const balances = await helper.getBalance(this.address);
                     const TokensForSwapData = await new SetupTokens(
                         config.address,
                         config.swapAllBalance,
@@ -31,6 +31,7 @@ export default class SwapModuleClass extends SDKOptions {
                         config.percentToSwap,
                         config.percentToSwapETH
                     ).execute();
+                    console.log(TokensForSwapData)
                     const amount = Number(TokensForSwapData.fromBalance) / 10 ** TokensForSwapData.decimals;
                     logger.info(`[Account ${accountIndex}][${moduleName}][SWAP][tx №${i + 1}] - Start swapping ${TokensForSwapData.src} for ${TokensForSwapData.dst} | Amount ${amount}`);
                     const txPayload = await new MakeSwap(TokensForSwapData.fromBalance, TokensForSwapData.src, TokensForSwapData.dst, TokensForSwapData.pool_id, moduleName, this.address, this.provider, this.account).execute()
@@ -59,4 +60,3 @@ export default class SwapModuleClass extends SDKOptions {
         }
     }
 }
-

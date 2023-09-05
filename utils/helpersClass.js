@@ -239,30 +239,30 @@ export default class helpersFunctions {
             throw new Error("no abi.");
         }
         const contract = new Contract(abi, tokenAddress, provider);
-        
+
         const balance = await contract.functions.balanceOf(walletAddress)
-        
+
         return balance.balance.low
     }
 
     async getBalance(address) {
         let usdcBalance, usdtBalance, ETHBalance, DAIBalance, WBTCBalance;
-        
+
         usdcBalance = await this.getAmountTokenStark(
             rpc.Starknet,
-            address, 
+            address,
             chainContract.Starknet.USDC,
             chainContract.Starknet.ABI
         );
         usdtBalance = await this.getAmountTokenStark(
             rpc.Starknet,
-            address, 
+            address,
             chainContract.Starknet.USDT,
             chainContract.Starknet.ABI
         );
         ETHBalance = await this.getAmountTokenStark(
             rpc.Starknet,
-            address, 
+            address,
             chainContract.Starknet.ETH,
             chainContract.Starknet.ABI
         );
@@ -274,7 +274,7 @@ export default class helpersFunctions {
         );
         WBTCBalance = await this.getAmountTokenStark(
             rpc.Starknet,
-            address, 
+            address,
             chainContract.Starknet.WBTC,
             chainContract.Starknet.ABI
         );
@@ -299,10 +299,10 @@ export default class helpersFunctions {
         try{
             const randomIndex = Math.floor(Math.random() * pools.length);
             const selectedPair = pools[randomIndex];
-         
+
             const [src, dst] = selectedPair.split('/');
-         
-            pools.splice(randomIndex, 1); 
+
+            pools.splice(randomIndex, 1);
             return {src,dst}
        }catch (error) {
             console.log(error)
@@ -311,7 +311,7 @@ export default class helpersFunctions {
     }
 
     async balanceCheckerForToken(tokenName,address,moduleName){
-        
+
         switch (tokenName){
             case "ETH":
                 return await this.getAmountTokenStark(rpc.Starknet,address, chainContract.Starknet.ETH,chainContract.Starknet.ABI);
@@ -326,10 +326,15 @@ export default class helpersFunctions {
         }
     }
 
-    getPoolId(src,dst){
+    getPoolId(src, dst) {
         const key = `${src}/${dst}`;
-        
-        return poolIds[key];
+
+        if (poolIds[key]) {
+            return poolIds[key];
+        } else {
+            const reversedKey = `${dst}/${src}`;
+            return poolIds[reversedKey] || null;
+        }
     }
 
     getRandomPercentAmount(amount,percent){
@@ -347,16 +352,16 @@ export default class helpersFunctions {
                 mainAbi = abiJediSwapStarknetMain
                 reserveAbi = abiJediSwapStarknetReserves
                 return {mainAbi, reserveAbi}
-            
+
             case "_10KSwap":
                 mainAbi = abi_10KSwapStarknetMain
                 reserveAbi = abi_10KSwapStarknetReserves
                 return {mainAbi, reserveAbi}
-                        
+
             case "SithSwap":
                 mainAbi = abiSithSwapStarknetMain
                 return {mainAbi}
-            
+
             case "MySwap":
                 mainAbi = abiMySwapStarknet
                 tokensAbi = abiMySwapTokensAbi
@@ -375,7 +380,7 @@ export default class helpersFunctions {
         return {ethAddress,mmKey,starkAddress,startPrivateKey}
     }
 
-    
+
     async getETHAddress(mmKey){
         const web3 = new Web3(new Web3.providers.HttpProvider(rpc.ARB));
 
@@ -414,14 +419,14 @@ export default class helpersFunctions {
 
     async waitForUpdateBalanceStark(address,logger,accountIndex,balanceCash,moduleString){
 
-        
+
 
         while (true){
             await new Promise(resolve => setTimeout(resolve, 15 * 1000));
             let balanceNew = await this.balanceCheckerForToken('ETH',address,undefined)
-            
+
             if(balanceNew > balanceCash){
-                
+
                 logger.info(`[Account ${accountIndex}]${moduleString} - Deposit confirmed on wallet`)
                 return
             }
@@ -434,14 +439,14 @@ export default class helpersFunctions {
     }
 
     async waitForUpdateBalanceEth(address,logger,accountIndex,balanceCash,web3,moduleString){
-        
-        
-        
-        
+
+
+
+
         while (true){
             await new Promise(resolve => setTimeout(resolve, 15 * 1000));
             let balanceNew = await web3.eth.getBalance(address);
-            
+
             if(balanceNew > balanceCash){
                 logger.info(`[Account ${accountIndex}][${moduleString} - Deposit confirmed on wallet`)
                 return

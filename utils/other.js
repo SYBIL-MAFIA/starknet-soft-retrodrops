@@ -149,31 +149,41 @@ export const protocol = {
 
 export const SrcDstTokens = {
     MySwap: [
-        { token: 'ETH', minBalance: getMinBalance('ETH'), toTokens: ['USDC', 'USDT'] },
+        { token: 'ETH', minBalance: getMinBalance('ETH'), toTokens: ['USDC', 'USDT', 'DAI', 'WBTC'] },
         { token: 'USDC', minBalance: getMinBalance('USDC'), toTokens: ['USDT'] },
-        { token: 'USDT', minBalance: getMinBalance('USDT'), toTokens: ['USDC'] }
+        { token: 'USDT', minBalance: getMinBalance('USDT'), toTokens: ['USDC'] },
+        { token: 'DAI', minBalance: getMinBalance('DAI'), toTokens: ['USDC'] },
+        { token: 'WBTC', minBalance: getMinBalance('WBTC'), toTokens: ['USDC'] },
     ],
     JediSwap: [
         { token: 'ETH', minBalance: getMinBalance('ETH'), toTokens: ['USDC', 'USDT'] },
-        { token: 'USDC', minBalance: getMinBalance('USDC'), toTokens: ['USDT'] },
-        { token: 'USDT', minBalance: getMinBalance('USDT'), toTokens: ['USDC'] },
+        { token: 'USDC', minBalance: getMinBalance('USDC'), toTokens: ['USDT', 'DAI'] },
+        { token: 'USDT', minBalance: getMinBalance('USDT'), toTokens: ['USDC', 'DAI', 'WBTC'] },
+        { token: 'DAI', minBalance: getMinBalance('DAI'), toTokens: ['USDC', 'USDT', 'WBTC'] },
+        { token: 'WBTC', minBalance: getMinBalance('WBTC'), toTokens: ['USDC', 'USDT', 'DAI'] },
     ],
     _10KSwap: [
-        { token: 'ETH', minBalance: getMinBalance('ETH'), toTokens: ['USDC', 'USDT'] },
-        { token: 'USDC', minBalance: getMinBalance('USDC'), toTokens: ['USDT'] },
-        { token: 'USDT', minBalance: getMinBalance('USDT'), toTokens: ['USDC'] },
+        { token: 'ETH', minBalance: getMinBalance('ETH'), toTokens: ['USDC', 'USDT', 'DAI', 'WBTC'] },
+        { token: 'USDC', minBalance: getMinBalance('USDC'), toTokens: ['USDT', 'DAI', 'WBTC'] },
+        { token: 'USDT', minBalance: getMinBalance('USDT'), toTokens: ['USDC', 'DAI', 'WBTC'] },
+        { token: 'DAI', minBalance: getMinBalance('DAI'), toTokens: ['USDC', 'USDT', 'WBTC'] },
+        { token: 'WBTC', minBalance: getMinBalance('WBTC'), toTokens: ['USDC', 'USDT', 'DAI', 'ETH'] },
 
     ],
     SithSwap: [
-        { token: 'ETH', minBalance: getMinBalance('ETH'), toTokens: ['USDC', 'USDT'] },
-        { token: 'USDC', minBalance: getMinBalance('USDC'), toTokens: ['USDT'] },
-        { token: 'USDT', minBalance: getMinBalance('USDT'), toTokens: ['USDC'] },
+        { token: 'ETH', minBalance: getMinBalance('ETH'), toTokens: ['USDC', 'USDT', 'DAI', 'WBTC'] },
+        { token: 'USDC', minBalance: getMinBalance('USDC'), toTokens: ['USDT', 'DAI'] },
+        { token: 'USDT', minBalance: getMinBalance('USDT'), toTokens: ['USDC', 'DAI'] },
+        { token: 'DAI', minBalance: getMinBalance('DAI'), toTokens: ['USDC', 'USDT', 'ETH'] },
+        { token: 'WBTC', minBalance: getMinBalance('WBTC'), toTokens: ['ETH'] },
 
     ],
     DEX: [
-        { token: 'ETH', minBalance: getMinBalance('ETH'), toTokens: ['USDC', 'USDT'] },
-        { token: 'USDC', minBalance: getMinBalance('USDC'), toTokens: ['USDT'] },
-        { token: 'USDT', minBalance: getMinBalance('USDT'), toTokens: ['USDC'] },
+        { token: 'ETH', minBalance: getMinBalance('ETH'), toTokens: ['USDC', 'USDT', 'DAI', 'WBTC'] },
+        { token: 'USDC', minBalance: getMinBalance('USDC'), toTokens: ['USDT', 'DAI', 'WBTC'] },
+        { token: 'USDT', minBalance: getMinBalance('USDT'), toTokens: ['USDC', 'DAI', 'WBTC'] },
+        { token: 'DAI', minBalance: getMinBalance('DAI'), toTokens: ['USDC', 'USDT', 'WBTC'] },
+        { token: 'WBTC', minBalance: getMinBalance('WBTC'), toTokens: ['USDC', 'USDT', 'DAI'] },
     ]
 };
 
