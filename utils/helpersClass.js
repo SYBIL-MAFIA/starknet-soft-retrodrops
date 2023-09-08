@@ -1,7 +1,8 @@
 import { chainContract, rpc, poolIds } from './other.js';
-import { HDNodeWallet, Mnemonic } from 'ethers';
+import { HDNodeWallet, Wallet } from 'ethers';
 import { mnemonicToSeedSync }  from '@scure/bip39';
 import { HDKey }  from "@scure/bip32";
+
 import {Contract, RpcProvider, ec, CallData, hash, Provider, constants, Account} from 'starknet';
 import { abiMySwapTokensAbi,abiJediSwapStarknetMain,abiJediSwapStarknetReserves,abi_10KSwapStarknetMain,abi_10KSwapStarknetReserves,abiSithSwapStarknetMain,abiMySwapStarknet } from "./abi.js"
 import { Web3 } from 'web3';
@@ -110,17 +111,25 @@ export default class helpersFunctions {
     async getPrivateKeyFromMnemonicStarkNetArgent (StarknetMnemonic) {
 
         try {
-            const mnemo = Mnemonic.fromPhrase(StarknetMnemonic);
-            const signer = HDNodeWallet.fromMnemonic(mnemo);
-            const masterNode = HDNodeWallet.fromSeed(signer.privateKey);
-            const childNode = masterNode.derivePath("m/44'/9004'/0'/0/0");
-
+              const signer = (Wallet.fromPhrase(mnemonic)).privateKey;
+            const masterNode = HDNodeWallet.fromSeed(
+                this.toHexString(signer));
+            const childNode = masterNode.derivePath(baseDerivationPath);
+        
             return '0x' + ec.starkCurve.grindKey(childNode.privateKey).toString();
         }catch (e) {
             console.log(e)
             throw new Error(e)
         }
     };
+
+    toHexString = (value) => {
+    let hex = BigInt(value).toString(16);
+    if (hex.length % 2 !== 0) {
+        hex = '0' + hex;
+    }
+    return '0x' + hex;
+};
 
     async getPrivateKeyFromMnemonicStarkNetBraavos(StarkNetMnemonic){
         const seed = mnemonicToSeedSync(StarkNetMnemonic);
