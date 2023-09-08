@@ -115,6 +115,7 @@ export default class txConfirmation {
             } catch (error) {
                 this.logger.error(`${this.moduleString} - Attempt ${attempts + 1} failed with error: ${error}. Retrying...`);
                 attempts++;
+                await new Promise(resolve => setTimeout(resolve, 60 * 1000))
                 await this.helpersFunction.setupExactDealay(General.delayBeforeNextRetry,this.moduleString,this.logger)
                 if (attempts >= maxAttempts) {
                     break
