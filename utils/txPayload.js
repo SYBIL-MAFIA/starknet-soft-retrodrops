@@ -80,10 +80,12 @@ export default class txConfirmation {
                             nonce = parseInt(nonce, 16);
                             if (nonce > nonceCash) {
                                 this.logger.info(`\x1b[32m${this.moduleString} - The transaction is fully confirmed in the blockchain | Nonce ${nonce}\x1b[0m`);
+                                 await new Promise(resolve => setTimeout(resolve, 20 * 1000));
                                 return;
                             }
                         }
                     } else if (nonce > nonceCash) {
+                        await new Promise(resolve => setTimeout(resolve, 20 * 1000));
                         this.logger.info(`\x1b[32m${this.moduleString} - The transaction is fully confirmed in the blockchain | Nonce ${nonce}\x1b[0m`);
                     }
                 } else if (flag === 0) {
