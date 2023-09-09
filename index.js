@@ -1,4 +1,5 @@
 import fs from 'fs'
+import shuffle from 'lodash/shuffle.js';
 import Workers from './utils/workers.js';
 import { General } from './setting/config.js';
 
@@ -36,10 +37,22 @@ export const loadWallets = async () => {
 const main = async () => {
   let addressIndex = 0; 
   const values = await loadWallets()
-  const mmMnemonics =  values.mm_mnemonics;
-  const starkMnemonics = values.stark_mnemonics
-  const okecx = values.okecx
-  const withdrawalAddressOkx = values.withdrawalAddressOkx
+
+  let allData = values.stark_mnemonics.map((item, index) => ({
+    stark: item,
+    mm: values.mm_mnemonics[index],
+    okecx: values.okecx[index],
+    withdrawalOkx: values.withdrawalAddressOkx[index],
+  }));
+
+  if (General.shuffleAccounts) {
+    allData = shuffle(allData);
+  }
+
+  const mmMnemonics =  allData.map(item => item.mm);
+  const starkMnemonics = allData.map(item => item.stark);
+  const okecx = allData.map(item => item.okecx);
+  const withdrawalAddressOkx = allData.map(item => item.withdrawalOkx);
   const groups = [];
   for (let i = 0; i < starkMnemonics.length; i += General.threads_counter) {
     groups.push(starkMnemonics.slice(i, i + General.threads_counter));
