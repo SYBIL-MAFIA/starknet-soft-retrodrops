@@ -39,6 +39,7 @@ export default class txConfirmation {
                         if (e.message.includes('Transaction with hash')) {
                             await new Promise(resolve => setTimeout(resolve, 15 * 1000));
                         } else {
+                            await new Promise(resolve => setTimeout(resolve, 15 * 1000));
                             this.logger.error(`${this.moduleString} - An error while executing tx:\n${e}`);
                             throw new Error(`${this.moduleString} - An error while executing tx\n`);
                         }
