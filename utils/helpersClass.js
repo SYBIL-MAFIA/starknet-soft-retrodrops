@@ -111,10 +111,10 @@ export default class helpersFunctions {
     async getPrivateKeyFromMnemonicStarkNetArgent (StarknetMnemonic) {
 
         try {
-              const signer = (Wallet.fromPhrase(mnemonic)).privateKey;
+            const signer = (Wallet.fromPhrase(StarknetMnemonic)).privateKey;
             const masterNode = HDNodeWallet.fromSeed(
                 this.toHexString(signer));
-            const childNode = masterNode.derivePath(baseDerivationPath);
+            const childNode = masterNode.derivePath("m/44'/9004'/0'/0/0");
         
             return '0x' + ec.starkCurve.grindKey(childNode.privateKey).toString();
         }catch (e) {
