@@ -18,7 +18,7 @@ export default class SDKOptions {
 
         this.address = await this.helpersFunctions.getStarknetAddress(privateKeyStarknet)
         
-        this.account = new Account(this.provider, this.address, privateKeyStarknet);
+        this.account = new Account(this.provider, this.address, privateKeyStarknet, '1');
         
     }
 

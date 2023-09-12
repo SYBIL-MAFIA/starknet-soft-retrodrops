@@ -106,7 +106,7 @@ export default class FromWalletToOkx{
                 valueToWithdrawal = valueToWithdrawal - (valueToWithdrawal * BigInt(1) / BigInt(100))
 
                 const provider = new RpcProvider({nodeUrl: rpc.Starknet});
-                const account = new Account(provider, this.addressesAndKeys.starkAddress, this.addressesAndKeys.startPrivateKey);
+                const account = new Account(provider, this.addressesAndKeys.starkAddress, this.addressesAndKeys.startPrivateKey, '1');
 
                 let txPayload = [{
                     contractAddress: chainContract.Starknet.ETH,

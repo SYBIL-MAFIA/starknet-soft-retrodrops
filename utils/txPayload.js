@@ -17,7 +17,7 @@ export default class txConfirmation {
     async execute() {
 
         return await this.retryOnFail(async () => {
-            const account = this.account
+            const account = this.account;
 
             try {
                 await this.helpersFunction.waitForGasTxStarknet(this.logger, this.txPayload, this.moduleString, account)

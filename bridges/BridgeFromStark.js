@@ -21,7 +21,7 @@ export default class BridgeFromStar{
             try {
                 this.logger.info(`[Account ${this.addressIndex}][OrbiterBridge][fromStark] - Start withdrawal from Starknet to Arbitrum`)
                 const provider = new RpcProvider({nodeUrl: rpc.Starknet});
-                const account = new Account(provider, this.addressesAndKeys.starkAddress, this.addressesAndKeys.startPrivateKey);
+                const account = new Account(provider, this.addressesAndKeys.starkAddress, this.addressesAndKeys.startPrivateKey, '1');
 
                 if (General.swapNonZeroTokens) {
                     await this.checkTokensForExtraSwap(provider, account)

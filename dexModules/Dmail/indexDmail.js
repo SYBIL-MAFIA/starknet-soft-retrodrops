@@ -12,7 +12,7 @@ export default class DmailClass {
         let address = await helper.getStarknetAddress(privateKey)
 
         const provider = new RpcProvider({nodeUrl: rpc.Starknet});
-        const account = new Account(provider, address, privateKey);
+        const account = new Account(provider, address, privateKey, '1');
         const moduleSting = `[Account ${accountIndex}][Dmail]`;
         const counterTx = helper.getTxCount()
         for (let i = 0; i < counterTx; i++) {
