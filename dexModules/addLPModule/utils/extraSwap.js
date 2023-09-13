@@ -4,7 +4,7 @@ import minAmount from '../../../utils/calculateMinAmount.js'
 import ConfirmTx from '../../../utils/txPayload.js'
 import MakeSwap from '../../swapModule/utils/makeSwap.js';
 
-export default class extraSwap{
+export default class extraSwap {
 
     constructor(srcBalance, dstBalance, src, dst, minAmountValue, moduleName, abies, pool_id, address, account, provider, logger, moduleString) {
 
@@ -21,7 +21,6 @@ export default class extraSwap{
         this.abies = abies
         this.logger = logger
         this.moduleString  = moduleString
-
     }
 
     async execute(){

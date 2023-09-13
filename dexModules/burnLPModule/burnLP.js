@@ -9,7 +9,7 @@ import burnLPCallData from './utils/setupTxPayload.js'
 import ConfirmTx from '../../utils/txPayload.js'
 import {General} from "../../setting/config.js";
 
-export default class burnLP extends SDKOptions{
+export default class burnLP extends SDKOptions {
     async execute(privateKeyStarknet, moduleName,logger,accountIndex) {
         await super.execute(privateKeyStarknet);
         const config = new ModuleConfig(moduleName, 'BURNLP').getConfig();
