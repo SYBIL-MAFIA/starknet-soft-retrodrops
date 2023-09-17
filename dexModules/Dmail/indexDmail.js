@@ -1,18 +1,18 @@
 import helpersFunctions from "../../utils/helpersClass.js";
+import SDKOptions from '../../utils/SDKOptions.js';
 import txConfirmation from "../../utils/txPayload.js";
 import {Dmail, General} from "../../setting/config.js";
-import {RpcProvider, Account, CallData} from 'starknet'
+import {RpcProvider, CallData} from 'starknet'
 import {rpc,wordsForEmail} from "../../utils/other.js";
 import crypto from "crypto";
 
-export default class DmailClass {
-    async execute(logger, accountIndex,privateKey) {
-
+export default class DmailClass extends SDKOptions {
+    async execute(logger, accountIndex, privateKey) {
+        await super.execute(privateKey)
         const helper = new helpersFunctions(Dmail);
         let address = await helper.getStarknetAddress(privateKey)
 
         const provider = new RpcProvider({nodeUrl: rpc.Starknet});
-        const account = new Account(provider, address, privateKey);
         const moduleSting = `[Account ${accountIndex}][Dmail]`;
         const counterTx = helper.getTxCount()
         for (let i = 0; i < counterTx; i++) {
@@ -20,7 +20,7 @@ export default class DmailClass {
             while (attempts > 0) {
                     try {
                         logger.info(`${moduleSting}[tx №${Number(i) + 1}] - Processing transaction`);
-                        await this.executeSingleDmail( i, logger, account, provider, address, moduleSting, helper);
+                        await this.executeSingleDmail( i, logger, this.account, provider, address, moduleSting, helper);
                         logger.info(`[Account ${accountIndex}]['Dmail'] - Data save successfully`)
                         await helper.setupDelay(logger, moduleSting);
                         break

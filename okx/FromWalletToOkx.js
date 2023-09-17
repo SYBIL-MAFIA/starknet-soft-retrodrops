@@ -8,7 +8,7 @@ import MakeSwap from "../dexModules/swapModule/utils/makeSwap.js";
 
 export default class FromWalletToOkx{
     
-    constructor(config, configBridge, addressesAndKeys, logger,okecx,addressIndex,StarknetOkx) {
+    constructor(config, configBridge, addressesAndKeys, logger, okecx, addressIndex, StarknetOkx) {
         this.config = config;
         this.addressesAndKeys = addressesAndKeys
         this.logger = logger;
@@ -16,7 +16,6 @@ export default class FromWalletToOkx{
         this.addressIndex = addressIndex
         this.helpersFunctions = new helpersFunctions()
         this.StarknetOkx = StarknetOkx
-        
     }
 
     async execute() {
@@ -105,15 +104,26 @@ export default class FromWalletToOkx{
                 let valueToWithdrawal = balance - reserve_amount
                 valueToWithdrawal = valueToWithdrawal - (valueToWithdrawal * BigInt(1) / BigInt(100))
 
-                const provider = new RpcProvider({nodeUrl: rpc.Starknet});
-                const account = new Account(provider, this.addressesAndKeys.starkAddress, this.addressesAndKeys.startPrivateKey);
+                const provider = new RpcProvider({ nodeUrl: rpc.Starknet });
+                let account; let cairoVersion;
+                if (General.walletName === 'Braavos') {
+                    account = new Account(provider, this.addressesAndKeys.starkAddress, this.addressesAndKeys.startPrivateKey, '0');
+                } else {
+                    try {
+                        cairoVersion = await this.helpersFunctions.checkVersion(provider, this.addressesAndKeys.starkAddress);
+                    } catch (error) {
+                        this.addressesAndKeys.starkAddress = await this.helpersFunctions.getArgentXWalletNew(this.addressesAndKeys.startPrivateKey);
+                        cairoVersion = await this.helpersFunctions.checkVersion(provider, this.addressesAndKeys.starkAddress);
+                    }
+                    account = new Account(provider, this.addressesAndKeys.starkAddress, this.addressesAndKeys.startPrivateKey, cairoVersion);
+                }
 
                 let txPayload = [{
                     contractAddress: chainContract.Starknet.ETH,
                     entrypoint: "transfer",
                     calldata: CallData.compile({
                         recipient: this.StarknetOkx,
-                        amount: {low: BigInt(valueToWithdrawal), high: 0n},
+                        amount: { low: BigInt(valueToWithdrawal), high: 0n },
                     })
                 }]
 

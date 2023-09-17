@@ -21,7 +21,18 @@ export default class BridgeFromStar{
             try {
                 this.logger.info(`[Account ${this.addressIndex}][OrbiterBridge][fromStark] - Start withdrawal from Starknet to Arbitrum`)
                 const provider = new RpcProvider({nodeUrl: rpc.Starknet});
-                const account = new Account(provider, this.addressesAndKeys.starkAddress, this.addressesAndKeys.startPrivateKey);
+                let account; let cairoVersion;
+                if (General.walletName === 'Braavos') {
+                    account = new Account(provider, this.addressesAndKeys.starkAddress, this.addressesAndKeys.startPrivateKey, '0');
+                } else {
+                    try {
+                        cairoVersion = await this.helpersFunctions.checkVersion(provider, this.addressesAndKeys.starkAddress);
+                    } catch (error) {
+                        this.addressesAndKeys.starkAddress = await this.helpersFunctions.getArgentXWalletNew(this.addressesAndKeys.startPrivateKey);
+                        cairoVersion = await this.helpersFunctions.checkVersion(provider, this.addressesAndKeys.starkAddress);
+                    }
+                    account = new Account(provider, this.addressesAndKeys.starkAddress, this.addressesAndKeys.startPrivateKey, cairoVersion);
+                }
 
                 if (General.swapNonZeroTokens) {
                     await this.checkTokensForExtraSwap(provider, account)
