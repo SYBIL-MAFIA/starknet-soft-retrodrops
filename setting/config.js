@@ -41,7 +41,7 @@ export class OKX {
 
   static withdrawalFromOkxToWallet = false
   static amountToWithdrawal = [0.007, 0.007]
-  static withdrawalToNetwork = 'Arbitrum One' // 'Starknet'
+  static withdrawalToNetwork = 'Arbitrum One' // 'Arbitrum One' 'Starknet'
 
   static withdrawalFromWalletToOkx = false
   static amountToSaveOnWallet = [0.0008, 0.0008]
