@@ -70,7 +70,7 @@ export default class helpersFunctions {
             account = new Account(provider, addressesAndKeys.starkAddress, addressesAndKeys.startPrivateKey);
         } else {
             try {
-                cairoVersion = await this.checkVersion(provider, addressesAndKeys.startPrivateKey);
+                cairoVersion = await this.checkVersion(provider, addressesAndKeys.starkAddress);
             } catch (e) {
                 addressesAndKeys.starkAddress = await this.getArgentXWalletNew(addressesAndKeys.startPrivateKey);
                 cairoVersion = await this.checkVersion(provider, addressesAndKeys.starkAddress);
