@@ -62,8 +62,21 @@ export default class helpersFunctions {
         return new Promise(resolve => setTimeout(resolve, ms));
     }
     async checkTokensForExtraSwap(addressesAndKeys,logger,addressIndex) {
-        const provider = new Provider({ sequencer: { network: constants.NetworkName.SN_MAIN } })
-        const account = new Account(provider, addressesAndKeys.starkAddress, addressesAndKeys.startPrivateKey);
+        const provider = new Provider({ sequencer: { network: constants.NetworkName.SN_MAIN } });
+        let account;
+        let cairoVersion;
+
+        if (General.walletName === 'Braavos') {
+            account = new Account(provider, addressesAndKeys.starkAddress, addressesAndKeys.startPrivateKey);
+        } else {
+            try {
+                cairoVersion = await this.checkVersion(provider, addressesAndKeys.startPrivateKey);
+            } catch (e) {
+                addressesAndKeys.starkAddress = await this.getArgentXWalletNew(addressesAndKeys.startPrivateKey);
+                cairoVersion = await this.checkVersion(provider, addressesAndKeys.starkAddress);
+            }
+            account = new Account(provider, addressesAndKeys.starkAddress, addressesAndKeys.startPrivateKey, cairoVersion);
+        }
 
         logger.info(`[Account ${addressIndex}][SWAPnonZeroTokens] - Checking token balances`)
         const balances = await this.getBalance(addressesAndKeys.starkAddress);
