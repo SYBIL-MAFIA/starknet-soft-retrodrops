@@ -31,7 +31,7 @@ export default class callSwapData {
             case "_10KSwap":
                 return "swapExactTokensForTokens"
             case "SithSwap":
-                return "swapExactTokensForTokensSupportingFeeOnTransferTokens"
+                return "swapExactTokensForTokens"
             
 
         }

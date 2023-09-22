@@ -43,7 +43,7 @@ export default class FromOkxToWallet  {
 
                 let address;
 
-                if (this.networkAndPrivateKeyAddress.network === 'StarkNet') {
+                if (this.networkAndPrivateKeyAddress.network === 'Starknet') {
                     address = await this.helperfunctions.getStarknetAddress(this.networkAndPrivateKeyAddress.privateKey);
                 } else {
                     address = await this.helperfunctions.getETHAddress(this.networkAndPrivateKeyAddress.privateKey);
@@ -114,8 +114,8 @@ export default class FromOkxToWallet  {
 }
     callNetworkChoose(){
         let network, privateKey
-        if (this.configOKX.withdrawalToNetwork === 'StarkNet') {
-            network = 'StarkNet'
+        if (this.configOKX.withdrawalToNetwork === 'Starknet') {
+            network = 'Starknet'
             privateKey = this.addressesAndKeys.startPrivateKey
 
         } else {
@@ -127,7 +127,7 @@ export default class FromOkxToWallet  {
     }
 
     async confirmBalance(address){
-        if (this.networkAndPrivateKeyAddress.network === 'StarkNet') {
+        if (this.networkAndPrivateKeyAddress.network === 'Starknet') {
             return await this.helperfunctions.balanceCheckerForToken('ETH', address, undefined)
         } else {
             return await this.web3.eth.getBalance(address)

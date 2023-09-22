@@ -42,11 +42,11 @@ export class OKX {
 
   static withdrawalFromOkxToWallet = false
   static amountToWithdrawal = [0.007, 0.007]
-  static withdrawalToNetwork = 'Arbitrum One' // 'StarkNet'
+  static withdrawalToNetwork = 'Arbitrum One' // 'Arbitrum One' 'Starknet'
 
   static withdrawalFromWalletToOkx = false
   static amountToSaveOnWallet = [0.0008, 0.0008]
-  static withdrawalFromNetwork = 'StarkNet' // 'Arbitrum One'
+  static withdrawalFromNetwork = 'Starknet' // 'Arbitrum One' 'Starknet'
 
   static delay = General.DELAY
 
