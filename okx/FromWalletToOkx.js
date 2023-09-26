@@ -23,7 +23,7 @@ export default class FromWalletToOkx{
         switch (this.config.withdrawalFromNetwork){
             case 'Arbitrum One':
                 return await this.WithDrawalFromEVM()
-            case 'StarkNet':
+            case 'Starknet':
                 return await this.withdrawalFromStarknet()
         }
        
@@ -98,7 +98,7 @@ export default class FromWalletToOkx{
         let attempts = General.attemptsStarkModules
         while (attempts > 0) {
             try {
-                await this.helpersFunctions.networkAbility('StarkNet',this.logger,`[Account ${this.addressIndex}][Withdrawal][Starknet]`,'d')
+                await this.helpersFunctions.networkAbility('Starknet',this.logger,`[Account ${this.addressIndex}][Withdrawal][Starknet]`,'d')
                 const reserve_amount = BigInt(10 ** 18 * (Math.random() * (this.config.amountToSaveOnWallet[1] - this.config.amountToSaveOnWallet[0]) + this.config.amountToSaveOnWallet[0]).toFixed(5))
                 const balance = await this.helpersFunctions.balanceCheckerForToken('ETH', this.addressesAndKeys.starkAddress, undefined)
                 let valueToWithdrawal = balance - reserve_amount
