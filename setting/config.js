@@ -4,7 +4,8 @@ export class General {
 
   static walletName = 'Argent_X' // Braavos | Argent_X
   static usePrivateKeys = false // если включен, то нужно загружать приватники, а не сид фразы
-  static shuffle = false
+  static shuffleModules = false
+  static shuffleAccounts = false
   static slippage = 0.5
   static threads_counter = 1
   static attemptsStarkModules = 3 // количество повторов если транзакция не пройдет

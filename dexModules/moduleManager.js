@@ -20,7 +20,7 @@ export default class ModuleManager {
     }
 
     async startModules(privateKey,logger,accountIndex) {
-        const activeModules = General.shuffle ? this.shuffleModules(this.modules) : this.modules;
+        const activeModules = General.shuffleModules ? this.shuffleModules(this.modules) : this.modules;
         let isFirstSwap = General.isFirstSwap
         for (const moduleName of activeModules) {
             logger.info(`[Account ${accountIndex}][${moduleName}] - Star working with module ${moduleName}`)
