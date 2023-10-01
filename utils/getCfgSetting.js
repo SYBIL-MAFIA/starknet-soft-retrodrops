@@ -4,23 +4,38 @@ export default class ModuleConfig {
     constructor(moduleName, additionalModule) {
       this.moduleName = moduleName;
       this.additionalModule = additionalModule;
+      this.configMap = {
+            JediSwap,
+            _10KSwap,
+            SithSwap,
+            MySwap,
+            OKX,
+            Bridge
+        };
     }
 
     getConfig() {
-        let swapModule, addLP, burnLP, swapAllBalance, counterTx, percentToSwap, delay, percentToSwapETH, poolsForAddLP, persentToAddLP, poolsForBurnLP
+        if (!this.configMap[this.moduleName]) {
+            console.log("Unknown moduleName:", this.moduleName);
+            return null;
+        }
+
+        let swapModule, addLP, burnLP, swapAllBalance, counterTx, percentToSwap, delay, percentToSwapETH, poolsForAddLP, persentToAddLP, poolsForBurnLP;
+
+        const config = this.configMap[this.moduleName];
     
         switch (this.additionalModule) {
             case 'MAIN':
-                ({ swapModule, addLP, burnLP } = eval(this.moduleName));
+                ({ swapModule, addLP, burnLP } = config;
                 return { swapModule, addLP, burnLP };
             case 'SWAP':
-                ({ swapAllBalance, counterTx, percentToSwap, delay, percentToSwapETH } = eval(this.moduleName));
+                ({ swapAllBalance, counterTx, percentToSwap, delay, percentToSwapETH } = config;
                 return { swapAllBalance, counterTx, percentToSwap, delay, percentToSwapETH };
             case 'ADDLP':
-                ({ poolsForAddLP, persentToAddLP, delay } = eval(this.moduleName));
+                ({ poolsForAddLP, persentToAddLP, delay } = config;
                 return { poolsForAddLP, persentToAddLP, delay };
             case 'BURNLP':
-                ({ poolsForBurnLP, delay } = eval(this.moduleName));
+                ({ poolsForBurnLP, delay } = config;
                 return { poolsForBurnLP,delay };
             default:
                 console.log("Unknown moduleName:", this.moduleName);
