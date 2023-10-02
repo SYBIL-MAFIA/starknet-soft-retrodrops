@@ -26,16 +26,16 @@ export default class ModuleConfig {
     
         switch (this.additionalModule) {
             case 'MAIN':
-                ({ swapModule, addLP, burnLP } = config;
+                ({ swapModule, addLP, burnLP } = config);
                 return { swapModule, addLP, burnLP };
             case 'SWAP':
-                ({ swapAllBalance, counterTx, percentToSwap, delay, percentToSwapETH } = config;
+                ({ swapAllBalance, counterTx, percentToSwap, delay, percentToSwapETH } = config);
                 return { swapAllBalance, counterTx, percentToSwap, delay, percentToSwapETH };
             case 'ADDLP':
-                ({ poolsForAddLP, persentToAddLP, delay } = config;
+                ({ poolsForAddLP, persentToAddLP, delay } = config);
                 return { poolsForAddLP, persentToAddLP, delay };
             case 'BURNLP':
-                ({ poolsForBurnLP, delay } = config;
+                ({ poolsForBurnLP, delay } = config);
                 return { poolsForBurnLP,delay };
             default:
                 console.log("Unknown moduleName:", this.moduleName);
