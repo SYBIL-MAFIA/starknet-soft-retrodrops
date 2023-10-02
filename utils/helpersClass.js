@@ -319,13 +319,14 @@ export default class helpersFunctions {
 
     getPoolPair(pools){
         try{
-            const randomIndex = Math.floor(Math.random() * pools.length);
-            const selectedPair = pools[randomIndex];
-         
-            const [src, dst] = selectedPair.split('/');
-         
-            pools.splice(randomIndex, 1); 
-            return {src,dst}
+           const poolsCopy = pools.slice(); // Create a copy of the pools array
+        
+        const randomIndex = Math.floor(Math.random() * poolsCopy.length);
+        const selectedPair = poolsCopy[randomIndex];
+
+        const [src, dst] = selectedPair.split('/');
+
+        return { src, dst };
        }catch (error) {
             console.log(error)
             this.getPoolPair(pools)
